@@ -3,11 +3,14 @@ package com.jxls.plus.transform.jexcel;
 import com.jxls.plus.common.CellData;
 import com.jxls.plus.common.CellRef;
 import com.jxls.plus.common.Context;
+import com.jxls.plus.util.Util;
 import jxl.*;
+import jxl.Cell;
 import jxl.biff.formula.FormulaException;
 import jxl.format.CellFormat;
-import jxl.write.WritableCell;
-import jxl.write.WritableSheet;
+import jxl.write.*;
+import jxl.write.Boolean;
+import jxl.write.Number;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,30 +92,60 @@ public class JexcelCellData extends CellData {
         cellFormat = cell.getCellFormat();
     }
 
-    public WritableCell createWritableCell(WritableSheet sheet, int col, int row, Context context){
-
+    public void writeToCell(WritableSheet sheet, int col, int row, Context context) throws WriteException {
+        evaluate(context);
+        WritableCell writableCell = createWritableCell(col, row);
+        updateCellGeneralInfo(writableCell);
+        updateCellStyle( writableCell );
+        sheet.addCell(writableCell);
     }
 
-    public void writeToCell(WritableCell cell, Context context){
-        evaluate(context);
-        updateCellGeneralInfo(cell);
-        updateCellContents( cell );
-        updateCellStyle( cell );
+    private WritableCell createWritableCell(int col, int row) {
+        WritableCell writableCell = null;
+        switch(targetCellType){
+            case STRING:
+                if( !(evaluationResult instanceof byte[])){
+                    writableCell = new Label(col, row, (String) evaluationResult);
+                }
+                break;
+            case BOOLEAN:
+                writableCell = new Boolean(col, row, (java.lang.Boolean)evaluationResult );
+                break;
+            case NUMBER:
+                double value = 0;
+                if( evaluationResult instanceof Integer){
+                    value = ((Integer)evaluationResult).doubleValue();
+                }else{
+                    value = (Double) evaluationResult;
+                }
+                writableCell = new Number(col, row, value);
+                break;
+            case FORMULA:
+                if( Util.formulaContainsJointedCellRef((String) evaluationResult) ){
+                    writableCell = new Label(col, row, (String) evaluationResult);
+                }else{
+                    writableCell = new Formula(col, row, (String) evaluationResult);
+                }
+                break;
+            case ERROR:
+                writableCell = new Blank(col, row);
+                break;
+            default:
+                writableCell = new Blank(col, row);
+                break;
+        }
+        return writableCell;
     }
 
     private void updateCellGeneralInfo(WritableCell cell) {
-        cell.setCellType( getPoiCellType(targetCellType) );
-        if(comment != null ){
-            cell.setCellComment(comment);
-        }
-    }
-
-    private void updateCellContents(WritableCell cell) {
-
+        WritableCellFeatures writableCellFeatures = new WritableCellFeatures(cellFeatures);
+        cell.setCellFeatures(writableCellFeatures);
     }
 
     private void updateCellStyle(WritableCell cell) {
-
+//        WritableCellFormat writableCellFormat = new WritableCellFormat(cellFormat);
+//        cell.setCellFormat(writableCellFormat);
+        cell.setCellFormat(cellFormat);
     }
 
 }
