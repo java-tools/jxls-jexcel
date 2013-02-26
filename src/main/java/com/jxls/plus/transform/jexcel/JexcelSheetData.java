@@ -22,7 +22,7 @@ public class JexcelSheetData extends SheetData {
         }
         int numberOfRows = sheet.getRows();
         for(int i = 0; i < numberOfRows; i++){
-            sheetData.rowDataList.add(JexcelRowData.createRowData(sheetData.sheetName, sheet.getRow(i), sheet.getRowView(i)));
+            sheetData.rowDataList.add(JexcelRowData.createRowData(sheet, i));
         }
         return sheetData;
     }

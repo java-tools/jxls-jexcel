@@ -46,6 +46,10 @@ public class JexcelTransformer extends AbstractTransformer {
         }
     }
 
+    public WritableWorkbook getWritableWorkbook() {
+        return writableWorkbook;
+    }
+
     public void transform(CellRef srcCellRef, CellRef targetCellRef, Context context) {
         CellData cellData = this.getCellData(srcCellRef);
         if(cellData != null){
@@ -126,6 +130,7 @@ public class JexcelTransformer extends AbstractTransformer {
     }
 
     public void addImage(AreaRef areaRef, int imageIdx) {
+        throw new UnsupportedOperationException("Adding an image using image index is not supported");
     }
 
     public void addImage(AreaRef areaRef, byte[] imageBytes, ImageType imageType) {

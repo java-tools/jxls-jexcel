@@ -35,6 +35,10 @@ public class JexcelCellData extends CellData {
         return cellData;
     }
 
+    public CellFormat getCellFormat() {
+        return cellFormat;
+    }
+
     private void readCell(Cell cell) {
         readCellGeneralInfo(cell);
         readCellContents(cell);

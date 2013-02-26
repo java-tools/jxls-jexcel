@@ -5,12 +5,17 @@ import com.jxls.plus.common.CellRef;
 import com.jxls.plus.common.RowData;
 import jxl.Cell;
 import jxl.CellView;
+import jxl.Sheet;
 
 /**
  * @author Leonid Vysochyn
  */
 public class JexcelRowData extends RowData {
     Cell[] cells;
+
+    public static RowData createRowData(Sheet sheet, int rowNum){
+        return createRowData(sheet.getName(), sheet.getRow(rowNum), sheet.getRowView(rowNum));
+    }
 
     public static RowData createRowData(String sheetName, Cell[] cells, CellView rowCellView){
         if( cells == null ) return null;
