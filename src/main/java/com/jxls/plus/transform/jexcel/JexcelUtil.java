@@ -17,11 +17,13 @@ public class JexcelUtil {
     public static void setCellComment(WritableCell cell, String commentText){
         WritableCellFeatures features = new WritableCellFeatures();
         features.setComment(commentText);
+        cell.setCellFeatures(features);
     }
 
     public static void setCellComment(WritableCell cell, String commentText, double width, double height){
         WritableCellFeatures features = new WritableCellFeatures();
         features.setComment(commentText, width, height);
+        cell.setCellFeatures(features);
     }
 
     public static byte[] imageStreamToByteArray(InputStream is) throws IOException {

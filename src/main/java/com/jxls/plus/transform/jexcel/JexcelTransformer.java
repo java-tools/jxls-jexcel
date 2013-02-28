@@ -65,11 +65,17 @@ public class JexcelTransformer extends AbstractTransformer {
             }
             SheetData sheetData = sheetMap.get(srcCellRef.getSheetName());
             if(!isIgnoreColumnProps()){
-                destSheet.setColumnView(targetCellRef.getCol(), sheetData.getColumnWidth(srcCellRef.getCol()));
+                CellView columnView = destSheet.getColumnView(targetCellRef.getCol());
+                columnView.setSize(sheetData.getColumnWidth(srcCellRef.getCol()));
+                destSheet.setColumnView(targetCellRef.getCol(), columnView);
+//                destSheet.setColumnView(targetCellRef.getCol(), sheetData.getColumnWidth(srcCellRef.getCol()));
             }
             if(!isIgnoreRowProps()){
                 try {
-                    destSheet.setRowView(targetCellRef.getRow(), sheetData.getRowData(srcCellRef.getRow()).getHeight());
+                    CellView rowView = destSheet.getRowView(targetCellRef.getRow());
+                    rowView.setSize(sheetData.getRowData(srcCellRef.getRow()).getHeight());
+                    destSheet.setRowView(targetCellRef.getRow(), rowView);
+//                    destSheet.setRowView(targetCellRef.getRow(), sheetData.getRowData(srcCellRef.getRow()).getHeight());
                 } catch (RowsExceededException e) {
                     logger.warn("Failed to set row height for " + targetCellRef.getCellName(), e);
                 }

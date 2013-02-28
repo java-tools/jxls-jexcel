@@ -2,6 +2,10 @@ package com.jxls.plus.transform.jexcel
 
 import jxl.CellType
 import jxl.Workbook
+import jxl.format.CellFormat
+import jxl.format.Colour
+import jxl.format.Font
+import jxl.format.Format
 import jxl.write.Formula
 import jxl.write.Label
 import jxl.write.WritableCellFormat
@@ -17,9 +21,6 @@ import com.jxls.plus.common.CellData
 import com.jxls.plus.common.CellRef
 import com.jxls.plus.common.AreaRef
 import com.jxls.plus.common.ImageType
-import spock.lang.Ignore
-
-import javax.imageio.ImageIO
 
 /**
  * @author Leonid Vysochyn
@@ -33,13 +34,10 @@ class JexcelTransformerTest extends Specification{
     def setup(){
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream()
         WritableWorkbook writableWorkbook = Workbook.createWorkbook(outputStream)
-//        customStyle = writableWorkbook.createCellStyle();
-//        customStyle.setFillBackgroundColor(IndexedColors.AQUA.getIndex())
-//        customStyle.setFillForegroundColor(IndexedColors.ORANGE.getIndex())
-//        Font font = writableWorkbook.createFont();
         WritableFont font = new WritableFont(WritableFont.COURIER, 24, WritableFont.NO_BOLD, true)
+        font.setColour(Colour.ORANGE)
         customStyle = new WritableCellFormat(font)
-
+        customStyle.setBackground(Colour.AQUA)
         WritableSheet sheet = writableWorkbook.createSheet("sheet 1", 0)
         sheet.addCell(new Number(0, 0, 1.5))
         sheet.addCell(new Label(1, 0, '${x}', customStyle))
@@ -61,6 +59,7 @@ class JexcelTransformerTest extends Specification{
         sheet.addCell(new Label(3, 2, '${2*x}x and ${2*y}y'))
         sheet.addCell(new Label(4, 2, '$[${myvar}*SUM(A1:A5) + ${myvar2}]'))
         writableWorkbook.write()
+        writableWorkbook.close()
         workbookBytes = outputStream.toByteArray()
     }
 
@@ -72,7 +71,8 @@ class JexcelTransformerTest extends Specification{
         then:
             CellData cellData = jexcelTransformer.getCellData(new CellRef("sheet 1", 0, 1))
             cellData instanceof JexcelCellData
-            ((JexcelCellData)cellData).getCellFormat() == customStyle
+            cellFormatEquals(((JexcelCellData)cellData).getCellFormat(), customStyle)
+            //((JexcelCellData)cellData).getCellFormat() == customStyle
             assert jexcelTransformer.getCellData(new CellRef("sheet 1", row, col)).getCellValue() == value
         where:
             row | col   | value
@@ -84,6 +84,40 @@ class JexcelTransformerTest extends Specification{
             2   | 4     |  '$[${myvar}*SUM(A1:A5) + ${myvar2}]'
     }
 
+    private static boolean cellFormatEquals(CellFormat format1, CellFormat format2){
+        if ( format1 == null && format2 == null ) {
+            return true
+        }
+        if ( format1 != null && format2 != null ){
+            return format1.alignment == format2.alignment && format1.backgroundColour == format2.backgroundColour &&
+                    formatEquals(format1.format, format2.format) && format1.indentation == format2.indentation &&
+                    format1.orientation == format2.orientation && format1.verticalAlignment == format2.verticalAlignment &&
+                    format1.shrinkToFit == format2.shrinkToFit && format1.wrap == format2.wrap && fontEquals(format1.font, format2.font);
+        }
+        return false
+    }
+
+    private static boolean formatEquals(Format format1, Format format2){
+        if ( format1 == null && format2 == null ) return true;
+        if ( format1 == null ){
+            return format2.formatString.length() == 0
+        }
+        if ( format2 == null ){
+            return format1.formatString.length() == 0
+        }
+        return format1.formatString == format2.formatString
+    }
+
+    private static boolean fontEquals(Font font1, Font font2){
+        if ( font1 == null && font2 == null ) return true;
+        if ( font1 != null && font2 != null ){
+            return font1.boldWeight == font2.boldWeight && font1.colour == font2.colour && font1.italic == font2.italic &&
+                    font1.name == font2.name && font1.pointSize == font2.pointSize && font1.struckout == font2.struckout &&
+                    font1.underlineStyle == font2.underlineStyle && font1.scriptStyle == font2.scriptStyle
+        }
+        return false;
+    }
+
     def "test transform string var"(){
         given:
             InputStream inputStream = new BufferedInputStream(new ByteArrayInputStream(workbookBytes))
@@ -91,15 +125,16 @@ class JexcelTransformerTest extends Specification{
             def jexcelTransformer = JexcelTransformer.createTransformer(inputStream, outputStream)
             def context = new Context()
             context.putVar("x", "Abcde")
+            def writableWorkbook = jexcelTransformer.getWritableWorkbook()
+            WritableSheet sheet = writableWorkbook.getSheet(0)
         when:
             jexcelTransformer.transform(new CellRef("sheet 1", 0, 1), new CellRef("sheet 1", 7, 7), context)
         then:
-            def writableWorkbook = jexcelTransformer.getWritableWorkbook()
-            WritableSheet sheet = writableWorkbook.getSheet(0)
+
             sheet.getCell(7, 7).contents == "Abcde"
-            sheet.getColumnView(7).size == 123
+            sheet.getColumnView(7).size == 123 *256
             sheet.getRowView(7).size == 23
-            sheet.getCell(7, 7).cellFormat == customStyle
+            cellFormatEquals(sheet.getCell(7, 7).cellFormat, customStyle)
     }
 
     def "test transform numeric var"(){
@@ -128,7 +163,8 @@ class JexcelTransformerTest extends Specification{
             jexcelTransformer.transform(new CellRef("sheet 1",1, 1), new CellRef("sheet 2",7, 7), context)
         then:
             WritableSheet sheet = jexcelTransformer.getWritableWorkbook().getSheet("sheet 2")
-            sheet.getCell(7, 7).type == CellType.NUMBER_FORMULA
+            sheet.getCell(7, 7).type == CellType.ERROR
+             sheet.getCell(7, 7) instanceof jxl.write.Formula
             sheet.getCell(7, 7).contents == "SUM(A1:A3)"
     }
 

@@ -47,9 +47,11 @@ public class JexcelCellData extends CellData {
 
     private void readCellGeneralInfo(Cell cell) {
         cellFeatures = cell.getCellFeatures();
-        String comment = cellFeatures.getComment();
-        if(comment != null){
-            setCellComment(comment);
+        if( cellFeatures != null ){
+            String comment = cellFeatures.getComment();
+            if(comment != null){
+                setCellComment(comment);
+            }
         }
     }
 
@@ -76,6 +78,11 @@ public class JexcelCellData extends CellData {
                     jxlCellType == jxl.CellType.DATE_FORMULA || jxlCellType == jxl.CellType.NUMBER_FORMULA){
                 FormulaCell formulaCell = (FormulaCell) cell;
                 formula = formulaCell.getFormula();
+                cellValue = formula;
+                cellType = CellType.FORMULA;
+            }else if(jxlCellType == jxl.CellType.ERROR && cell instanceof Formula){
+                Formula formulaCell = (Formula) cell;
+                formula = formulaCell.getContents();
                 cellValue = formula;
                 cellType = CellType.FORMULA;
             }else if (jxlCellType == jxl.CellType.ERROR || jxlCellType == jxl.CellType.FORMULA_ERROR){
@@ -142,8 +149,10 @@ public class JexcelCellData extends CellData {
     }
 
     private void updateCellGeneralInfo(WritableCell cell) {
-        WritableCellFeatures writableCellFeatures = new WritableCellFeatures(cellFeatures);
-        cell.setCellFeatures(writableCellFeatures);
+        if( cellFeatures != null ){
+            WritableCellFeatures writableCellFeatures = new WritableCellFeatures(cellFeatures);
+            cell.setCellFeatures(writableCellFeatures);
+        }
     }
 
     private void updateCellStyle(WritableCell cell) {
