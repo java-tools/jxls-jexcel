@@ -68,25 +68,53 @@ public class JexcelTransformer extends AbstractTransformer {
                 CellView columnView = destSheet.getColumnView(targetCellRef.getCol());
                 columnView.setSize(sheetData.getColumnWidth(srcCellRef.getCol()));
                 destSheet.setColumnView(targetCellRef.getCol(), columnView);
-//                destSheet.setColumnView(targetCellRef.getCol(), sheetData.getColumnWidth(srcCellRef.getCol()));
             }
             if(!isIgnoreRowProps()){
                 try {
                     CellView rowView = destSheet.getRowView(targetCellRef.getRow());
                     rowView.setSize(sheetData.getRowData(srcCellRef.getRow()).getHeight());
                     destSheet.setRowView(targetCellRef.getRow(), rowView);
-//                    destSheet.setRowView(targetCellRef.getRow(), sheetData.getRowData(srcCellRef.getRow()).getHeight());
                 } catch (RowsExceededException e) {
                     logger.warn("Failed to set row height for " + targetCellRef.getCellName(), e);
                 }
             }
             try{
                 ((JexcelCellData)cellData).writeToCell(destSheet, targetCellRef.getCol(), targetCellRef.getRow(), context);
+                copyMergedRegions(cellData, targetCellRef);
             }catch(Exception e){
                 logger.error("Failed to write a cell with " + cellData + " and " + context, e);
             }
         }
+    }
 
+    private void copyMergedRegions(CellData sourceCellData, CellRef destCell) throws WriteException {
+        if(sourceCellData.getSheetName() == null ){ throw new IllegalArgumentException("Sheet name is null in copyMergedRegions");}
+        JexcelSheetData sheetData = (JexcelSheetData)sheetMap.get( sourceCellData.getSheetName() );
+        Range cellMergedRegion = null;
+        for (Range mergedRegion : sheetData.getMergedCells()) {
+            if(mergedRegion.getTopLeft().getRow() == sourceCellData.getRow() && mergedRegion.getTopLeft().getColumn() == sourceCellData.getCol()){
+                cellMergedRegion = mergedRegion;
+                break;
+            }
+        }
+        if( cellMergedRegion != null){
+            findAndRemoveExistingCellRegion(destCell);
+            WritableSheet destSheet = writableWorkbook.getSheet(destCell.getSheetName());
+            destSheet.mergeCells(destCell.getCol(), destCell.getRow(),
+                    destCell.getCol() + cellMergedRegion.getBottomRight().getColumn() - cellMergedRegion.getTopLeft().getColumn(),
+                    destCell.getRow() + cellMergedRegion.getBottomRight().getRow() - cellMergedRegion.getTopLeft().getRow());
+        }
+    }
+
+    private void findAndRemoveExistingCellRegion(CellRef cellRef) {
+        WritableSheet destSheet = writableWorkbook.getSheet(cellRef.getSheetName());
+        Range[] mergedRegions = destSheet.getMergedCells();
+        for(Range mergedRegion : mergedRegions){
+            if(mergedRegion.getTopLeft().getRow() <= cellRef.getRow() && mergedRegion.getBottomRight().getRow() >= cellRef.getRow() &&
+                    mergedRegion.getTopLeft().getColumn() <= cellRef.getCol() && mergedRegion.getBottomRight().getColumn() >= cellRef.getCol() ){
+                destSheet.unmergeCells( mergedRegion );
+            }
+        }
     }
 
     public void setFormula(CellRef cellRef, String formulaString) {
