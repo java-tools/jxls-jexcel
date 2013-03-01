@@ -199,8 +199,8 @@ class JexcelTransformerTest extends Specification{
             def writableWorkbook = jexcelTransformer.getWritableWorkbook()
             WritableSheet sheet = writableWorkbook.getSheet("sheet 1")
             WritableSheet sheet2 = writableWorkbook.getSheet("sheet 2")
-            sheet.getCell(1, 5) == "Abcde"
-            sheet2.getCell(1, 10) == "Fghij"
+            sheet.getCell(1, 5).contents == "Abcde"
+            sheet2.getCell(1, 10).contents == "Fghij"
     }
 
     def "test transform overridden cells"(){
@@ -213,17 +213,17 @@ class JexcelTransformerTest extends Specification{
             def context2 = new Context()
             context2.putVar("x", "Fghij")
         when:
-            jexcelTransformer.transform(new CellRef("sheet 1",0, 1), new CellRef("sheet 1",5, 1), context1)
-            jexcelTransformer.transform(new CellRef("sheet 1",0, 0), new CellRef("sheet 2",0, 1), context1)
-            jexcelTransformer.transform(new CellRef("sheet 1",0, 1), new CellRef("sheet 2",10, 1), context2)
+            jexcelTransformer.transform(new CellRef("sheet 1", 0, 1), new CellRef("sheet 1", 5, 1), context1)
+            jexcelTransformer.transform(new CellRef("sheet 1", 0, 0), new CellRef("sheet 2", 0, 1), context1)
+            jexcelTransformer.transform(new CellRef("sheet 1", 0, 1), new CellRef("sheet 2", 10, 1), context2)
         then:
-        def writableWorkbook = jexcelTransformer.getWritableWorkbook()
-        WritableSheet sheet = writableWorkbook.getSheet("sheet 1")
-        sheet.getCell(1, 5).contents == "Abcde"
-        WritableSheet sheet2 = writableWorkbook.getSheet("sheet 2")
-        sheet2.getCell(1, 0).contents == "1.5"
-        sheet2.getCell(1, 10).type == CellType.LABEL
-        sheet2.getCell(1, 10).contents == "Fghij"
+            def writableWorkbook = jexcelTransformer.getWritableWorkbook()
+            WritableSheet sheet = writableWorkbook.getSheet("sheet 1")
+            sheet.getCell(1, 5).contents == "Abcde"
+            WritableSheet sheet2 = writableWorkbook.getSheet("sheet 2")
+            sheet2.getCell(1, 0).contents == sheet.getCell(0,0).contents
+            sheet2.getCell(1, 10).type == CellType.LABEL
+            sheet2.getCell(1, 10).contents == "Fghij"
     }
 
     def "test multiple expressions in a cell"(){
