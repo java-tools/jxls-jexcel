@@ -62,6 +62,7 @@ public class JexcelTransformer extends AbstractTransformer {
             if(destSheet == null){
                 int numberOfSheets = writableWorkbook.getNumberOfSheets();
                 destSheet = writableWorkbook.createSheet(targetCellRef.getSheetName(), numberOfSheets);
+                JexcelUtil.copySheetProperties(workbook.getSheet( srcCellRef.getSheetName() ), destSheet);
             }
             SheetData sheetData = sheetMap.get(srcCellRef.getSheetName());
             if(!isIgnoreColumnProps()){

@@ -6,6 +6,7 @@ import jxl.format.CellFormat
 import jxl.format.Colour
 import jxl.format.Font
 import jxl.format.Format
+import jxl.format.PaperSize
 import jxl.write.Formula
 import jxl.write.Label
 import jxl.write.WritableCellFormat
@@ -39,6 +40,8 @@ class JexcelTransformerTest extends Specification{
         customStyle = new WritableCellFormat(font)
         customStyle.setBackground(Colour.AQUA)
         WritableSheet sheet = writableWorkbook.createSheet("sheet 1", 0)
+        sheet.getSettings().setBottomMargin(15)
+        sheet.getSettings().setPaperSize( PaperSize.A3 )
         sheet.addCell(new Number(0, 0, 1.5))
         sheet.addCell(new Label(1, 0, '${x}', customStyle))
         def label = new Label(2, 0, '${x*y}')
@@ -178,9 +181,11 @@ class JexcelTransformerTest extends Specification{
         when:
             jexcelTransformer.transform(new CellRef("sheet 1",0, 1), new CellRef("sheet2", 7, 7), context)
         then:
-            WritableSheet sheet = jexcelTransformer.getWritableWorkbook().getSheet("sheet 1")
+//            WritableSheet sheet = jexcelTransformer.getWritableWorkbook().getSheet("sheet 1")
             WritableSheet sheet1 = jexcelTransformer.getWritableWorkbook().getSheet("sheet2")
             sheet1.getCell(7, 7).contents == "Abcde"
+            sheet1.getSettings().bottomMargin == 15
+            sheet1.getSettings().paperSize == PaperSize.A3
     }
     
     def "test transform multiple times"(){
