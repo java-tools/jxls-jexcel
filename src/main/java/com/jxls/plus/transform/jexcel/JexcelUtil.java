@@ -1,5 +1,6 @@
 package com.jxls.plus.transform.jexcel;
 
+import com.jxls.plus.builder.xls.XlsCommentAreaBuilder;
 import jxl.Range;
 import jxl.Sheet;
 import jxl.SheetSettings;
@@ -91,5 +92,16 @@ public class JexcelUtil {
         destSettings.setVerticalFreeze( srcSettings.getVerticalFreeze() );
         destSettings.setVerticalPrintResolution( srcSettings.getVerticalPrintResolution() );
         destSettings.setZoomFactor( srcSettings.getZoomFactor());
+    }
+
+    public static boolean isJxComment(String cellComment) {
+        if(cellComment == null ) return false;
+        String[] commentLines = cellComment.split("\\n");
+        for (String commentLine : commentLines) {
+            if( (commentLine != null) && XlsCommentAreaBuilder.isCommandString( commentLine.trim() ) ){
+                return true;
+            }
+        }
+        return false;
     }
 }

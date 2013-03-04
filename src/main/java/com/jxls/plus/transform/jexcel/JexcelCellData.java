@@ -157,6 +157,9 @@ public class JexcelCellData extends CellData {
     private void updateCellGeneralInfo(WritableCell cell) {
         if( cellFeatures != null ){
             WritableCellFeatures writableCellFeatures = new WritableCellFeatures(cellFeatures);
+            if( JexcelUtil.isJxComment(getCellComment()) ){
+                writableCellFeatures.removeComment();
+            }
             cell.setCellFeatures(writableCellFeatures);
         }
     }
