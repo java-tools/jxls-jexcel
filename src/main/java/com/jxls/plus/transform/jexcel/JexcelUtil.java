@@ -1,23 +1,28 @@
 package com.jxls.plus.transform.jexcel;
 
-import jxl.Cell;
 import jxl.Range;
 import jxl.Sheet;
 import jxl.SheetSettings;
 import jxl.write.WritableCell;
 import jxl.write.WritableCellFeatures;
 import jxl.write.WritableSheet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * @author Leonid Vysochyn
  */
 public class JexcelUtil {
+    static Logger logger = LoggerFactory.getLogger(JexcelUtil.class);
+
     public static void setCellComment(WritableCell cell, String commentText){
         WritableCellFeatures features = new WritableCellFeatures();
         features.setComment(commentText);
@@ -35,6 +40,16 @@ public class JexcelUtil {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ImageIO.write(image, "png", baos);
         return baos.toByteArray();
+    }
+
+    public WritableCellValue hyperlink(String address, String description){
+        try {
+            URL url = new URL(address);
+            return new WritableHyperlinkCell(url, description);
+        } catch (MalformedURLException e) {
+            logger.warn("Failed to create URL " + address, e);
+        }
+        return null;
     }
 
     public static void copySheetProperties(Sheet src, WritableSheet dest) {
@@ -59,7 +74,7 @@ public class JexcelUtil {
         destSettings.setPageBreakPreviewMagnification( srcSettings.getPageBreakPreviewMagnification() );
         destSettings.setPageBreakPreviewMode( srcSettings.getPageBreakPreviewMode() );
         destSettings.setPageOrder( srcSettings.getPageOrder() );
-        destSettings.setPageStart( srcSettings.getPageStart() );
+//        destSettings.setPageStart( srcSettings.getPageStart() );
         destSettings.setPaperSize( srcSettings.getPaperSize() );
         Range srcPrintArea = srcSettings.getPrintArea();
         if( srcPrintArea != null ){

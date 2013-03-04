@@ -105,10 +105,16 @@ public class JexcelCellData extends CellData {
 
     public void writeToCell(WritableSheet sheet, int col, int row, Context context) throws WriteException {
         evaluate(context);
-        WritableCell writableCell = createWritableCell(col, row);
-        updateCellGeneralInfo(writableCell);
-        updateCellStyle( writableCell );
-        sheet.addCell(writableCell);
+        if( evaluationResult != null && evaluationResult instanceof WritableCellValue){
+            WritableCell cell = ((WritableCellValue)evaluationResult).writeToCell(sheet, col, row, context);
+            updateCellStyle(cell);
+        }else{
+            WritableCell writableCell = createWritableCell(col, row);
+            updateCellGeneralInfo(writableCell);
+            updateCellStyle( writableCell );
+            sheet.addCell(writableCell);
+        }
+
     }
 
     private WritableCell createWritableCell(int col, int row) {
