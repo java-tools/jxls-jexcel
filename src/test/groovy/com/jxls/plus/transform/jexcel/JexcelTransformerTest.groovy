@@ -1,5 +1,6 @@
 package com.jxls.plus.transform.jexcel
 
+import jxl.Cell
 import jxl.CellType
 import jxl.Workbook
 import jxl.format.CellFormat
@@ -51,7 +52,7 @@ class JexcelTransformerTest extends Specification{
         sheet.mergeCells(3, 0, 4, 1)
         sheet.setRowView(0, 23)
         sheet.setColumnView(1, 123)
-        def formulaCell = new Formula(1, 1, "SUM(A1:A3)")
+        def formulaCell = new Formula(1, 1, "SUM(A1:A3)", customStyle)
         JexcelUtil.setCellComment( formulaCell, "comment 2")
         sheet.addCell(formulaCell)
         sheet.addCell(new Label(2, 1, '${y*y}'))
@@ -60,7 +61,8 @@ class JexcelTransformerTest extends Specification{
         sheet.addCell(new Label(1, 2, '${2*y}'))
         sheet.addCell(new Label(2, 2, '${4*4}'))
         sheet.addCell(new Label(3, 2, '${2*x}x and ${2*y}y'))
-        sheet.addCell(new Label(4, 2, '$[${myvar}*SUM(A1:A5) + ${myvar2}]'))
+        sheet.addCell(new Label(4, 2, '$[${myvar}*SUM(A1:A5) + ${myvar2}]', customStyle))
+        sheet.addCell(new Label(5, 2, "test", customStyle))
         writableWorkbook.write()
         writableWorkbook.close()
         workbookBytes = outputStream.toByteArray()
@@ -75,7 +77,6 @@ class JexcelTransformerTest extends Specification{
             CellData cellData = jexcelTransformer.getCellData(new CellRef("sheet 1", 0, 1))
             cellData instanceof JexcelCellData
             cellFormatEquals(((JexcelCellData)cellData).getCellFormat(), customStyle)
-            //((JexcelCellData)cellData).getCellFormat() == customStyle
             assert jexcelTransformer.getCellData(new CellRef("sheet 1", row, col)).getCellValue() == value
         where:
             row | col   | value
@@ -163,12 +164,13 @@ class JexcelTransformerTest extends Specification{
             def jexcelTransformer = JexcelTransformer.createTransformer(inputStream, outputStream)
             def context = new Context()
         when:
-            jexcelTransformer.transform(new CellRef("sheet 1",1, 1), new CellRef("sheet 2",7, 7), context)
+            jexcelTransformer.transform(new CellRef("sheet 1", 1, 1), new CellRef("sheet 2", 7, 7), context)
         then:
             WritableSheet sheet = jexcelTransformer.getWritableWorkbook().getSheet("sheet 2")
             sheet.getCell(7, 7).type == CellType.ERROR
-             sheet.getCell(7, 7) instanceof jxl.write.Formula
+            sheet.getCell(7, 7) instanceof jxl.write.Formula
             sheet.getCell(7, 7).contents == "SUM(A1:A3)"
+            cellFormatEquals(sheet.getCell(7, 7).cellFormat, customStyle)
     }
 
     def "test transform a cell to other sheet"(){
@@ -179,7 +181,7 @@ class JexcelTransformerTest extends Specification{
             def context = new Context()
             context.putVar("x", "Abcde")
         when:
-            jexcelTransformer.transform(new CellRef("sheet 1",0, 1), new CellRef("sheet2", 7, 7), context)
+            jexcelTransformer.transform(new CellRef("sheet 1", 0, 1), new CellRef("sheet2", 7, 7), context)
         then:
 //            WritableSheet sheet = jexcelTransformer.getWritableWorkbook().getSheet("sheet 1")
             WritableSheet sheet1 = jexcelTransformer.getWritableWorkbook().getSheet("sheet2")
@@ -271,9 +273,13 @@ class JexcelTransformerTest extends Specification{
             OutputStream outputStream = new BufferedOutputStream(new ByteArrayOutputStream())
             def jexcelTransformer = JexcelTransformer.createTransformer(inputStream, outputStream)
         when:
-            jexcelTransformer.setFormula(new CellRef("sheet 2",1, 1), "SUM(B1:B5)")
+            jexcelTransformer.setFormula(new CellRef("sheet 2", 1, 1), "SUM(B1:B5)")
+            jexcelTransformer.setFormula(new CellRef("sheet 1", 2, 5), "2*A1")
         then:
             jexcelTransformer.getWritableWorkbook().getSheet("sheet 2").getCell(1, 1).contents == "SUM(B1:B5)"
+            Cell cell = jexcelTransformer.getWritableWorkbook().getSheet("sheet 1").getCell(5, 2)
+            cell.contents == "2.0*A1"
+            cellFormatEquals(cell.cellFormat, customStyle)
     }
 
     def "test get formula cells"(){
@@ -288,8 +294,8 @@ class JexcelTransformerTest extends Specification{
             def formulaCells = jexcelTransformer.getFormulaCells()
         then:
             formulaCells.size() == 2
-            formulaCells.contains(new CellData("sheet 1",1,1, CellData.CellType.FORMULA, "SUM(A1:A3)"))
-            formulaCells.contains(new CellData("sheet 1",2,4, CellData.CellType.STRING, '$[${myvar}*SUM(A1:A5) + ${myvar2}]'))
+            formulaCells.contains(new CellData("sheet 1", 1, 1, CellData.CellType.FORMULA, "SUM(A1:A3)"))
+            formulaCells.contains(new CellData("sheet 1", 2, 4, CellData.CellType.STRING, '$[${myvar}*SUM(A1:A5) + ${myvar2}]'))
     }
 
     def "test get target cells"(){

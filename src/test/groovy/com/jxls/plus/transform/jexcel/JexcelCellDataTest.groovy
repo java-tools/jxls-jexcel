@@ -1,6 +1,7 @@
 package com.jxls.plus.transform.jexcel
 
 import com.jxls.plus.common.Context
+import jxl.Hyperlink
 import jxl.Workbook
 import jxl.write.Blank
 import jxl.write.Formula
@@ -45,6 +46,7 @@ class JexcelCellDataTest extends Specification{
         WritableSheet sheet2 = writableWorkbook.createSheet("sheet 2", 1)
         sheet2.addCell(new Blank(0, 0))
         sheet2.addCell(new Blank(1, 1))
+        sheet2.addCell(new Label(2, 1, '''${jxl.hyperlink('http://google.com/', 'Google')}'''))
 //        sheet2.getRow(1).createCell(2).setCellValue('''${poi.hyperlink('http://google.com/', 'Google', 'URL')}''')
         writableWorkbook.write()
         writableWorkbook.close()
@@ -168,19 +170,19 @@ class JexcelCellDataTest extends Specification{
 
     }
 
-    @Ignore("Not implemented yet")
     def "test hyperlink cell"(){
-//        setup:
-//            PoiCellData cellData = PoiCellData.createCellData(new CellRef("sheet 2", 1, 2), writableWorkbook.getSheetAt(1).getRow(1).getCell(2))
-//            def poiContext = new PoiContext()
-//        when:
-//            cellData.writeToCell(writableWorkbook.getSheetAt(1).getRow(1).getCell(2), poiContext)
-//        then:
-//            def hyperlink = writableWorkbook.getSheetAt(1).getRow(1).getCell(2).getHyperlink()
-//            hyperlink != null
-//            hyperlink.address == "http://google.com/"
-//            writableWorkbook.getSheetAt(1).getRow(1).getCell(2).getStringCellValue() == "Google"
-//            hyperlink.type == Hyperlink.LINK_URL
+        setup:
+            JexcelCellData cellData = JexcelCellData.createCellData(new CellRef("sheet 2", 1, 2), writableWorkbook.getSheet(1).getCell(2, 1))
+            def context = new JexcelContext()
+      when:
+            cellData.writeToCell(writableWorkbook.getSheet(1), 2, 1, context)
+      then:
+            def sheet = writableWorkbook.getSheet(1)
+            Hyperlink[] links = sheet.getHyperlinks()
+            links.length == 1
+            Hyperlink link = links[0]
+            link.isURL()
+            link.getURL().toString() == "http://google.com/"
     }
 
 }

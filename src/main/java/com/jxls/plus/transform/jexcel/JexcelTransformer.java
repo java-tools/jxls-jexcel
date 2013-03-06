@@ -125,7 +125,11 @@ public class JexcelTransformer extends AbstractTransformer {
             int numberOfSheets = writableWorkbook.getNumberOfSheets();
             sheet = writableWorkbook.createSheet(cellRef.getSheetName(), numberOfSheets);
         }
+        Cell cell = sheet.getCell(cellRef.getCol(), cellRef.getRow());
         WritableCell writableCell = new Formula(cellRef.getCol(), cellRef.getRow(), formulaString);
+        if(cell != null && cell.getCellFormat() != null){
+            writableCell.setCellFormat(cell.getCellFormat());
+        }
         try{
             sheet.addCell(writableCell);
         }catch (Exception e){

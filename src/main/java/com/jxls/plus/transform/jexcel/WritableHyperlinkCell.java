@@ -1,6 +1,7 @@
 package com.jxls.plus.transform.jexcel;
 
 import com.jxls.plus.common.Context;
+import jxl.Cell;
 import jxl.Workbook;
 import jxl.write.*;
 import jxl.write.biff.RowsExceededException;
@@ -49,9 +50,13 @@ public class WritableHyperlinkCell implements WritableCellValue {
             }
         }
         sheet.addHyperlink(hyperlink);
-        WritableCell cell = new Blank(col, row);
-        sheet.addCell(cell);
-        return cell;
+        Cell cell = sheet.getCell(col, row);
+        WritableCell writableCell = new Label(col, row, description != null ? description : url.toString());
+        if( cell != null && cell.getCellFormat() != null ){
+            writableCell.setCellFormat( cell.getCellFormat() );
+        }
+        sheet.addCell(writableCell);
+        return writableCell;
     }
 
     public File getFile() {
