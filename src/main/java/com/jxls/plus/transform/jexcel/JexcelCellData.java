@@ -75,7 +75,8 @@ public class JexcelCellData extends CellData {
                 cellValue = booleanCell.getValue();
                 cellType = CellType.BOOLEAN;
             }else if (jxlCellType == jxl.CellType.STRING_FORMULA || jxlCellType == jxl.CellType.BOOLEAN_FORMULA ||
-                    jxlCellType == jxl.CellType.DATE_FORMULA || jxlCellType == jxl.CellType.NUMBER_FORMULA){
+                    jxlCellType == jxl.CellType.DATE_FORMULA || jxlCellType == jxl.CellType.NUMBER_FORMULA ||
+                    jxlCellType == jxl.CellType.FORMULA_ERROR){
                 FormulaCell formulaCell = (FormulaCell) cell;
                 formula = formulaCell.getFormula();
                 cellValue = formula;
@@ -85,7 +86,7 @@ public class JexcelCellData extends CellData {
                 formula = formulaCell.getContents();
                 cellValue = formula;
                 cellType = CellType.FORMULA;
-            }else if (jxlCellType == jxl.CellType.ERROR || jxlCellType == jxl.CellType.FORMULA_ERROR){
+            }else if (jxlCellType == jxl.CellType.ERROR){
                 ErrorCell errorCell = (ErrorCell) cell;
                 cellValue = errorCell.getErrorCode();
                 cellType = CellType.ERROR;
