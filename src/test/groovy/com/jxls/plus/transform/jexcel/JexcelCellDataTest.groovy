@@ -46,7 +46,7 @@ class JexcelCellDataTest extends Specification{
         WritableSheet sheet2 = writableWorkbook.createSheet("sheet 2", 1)
         sheet2.addCell(new Blank(0, 0))
         sheet2.addCell(new Blank(1, 1))
-        sheet2.addCell(new Label(2, 1, '''${jxl.hyperlink('http://google.com/', 'Google')}'''))
+        sheet2.addCell(new Label(2, 1, '''${util.hyperlink('http://google.com/', 'Google')}'''))
 //        sheet2.getRow(1).createCell(2).setCellValue('''${poi.hyperlink('http://google.com/', 'Google', 'URL')}''')
         writableWorkbook.write()
         writableWorkbook.close()
