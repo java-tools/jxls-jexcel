@@ -65,6 +65,7 @@ class JexcelTransformerTest extends Specification{
         sheet.addCell(new Label(5, 2, "test", customStyle))
         writableWorkbook.write()
         writableWorkbook.close()
+        outputStream.flush()
         workbookBytes = outputStream.toByteArray()
     }
 
@@ -388,6 +389,17 @@ class JexcelTransformerTest extends Specification{
             jexcelTransformer.addImage(new AreaRef("'sheet 1'!A1:C10"), imageBytes, ImageType.PNG);
         then:
             jexcelTransformer.getWritableWorkbook().getSheet('sheet 1').getNumberOfImages() == 1
+    }
+
+    def "test write"(){
+        given:
+            InputStream inputStream = new ByteArrayInputStream(workbookBytes)
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream()
+            def jexcelTransformer = JexcelTransformer.createTransformer(inputStream, outputStream)
+        when:
+            jexcelTransformer.write()
+        then:
+            outputStream.size() > 0
     }
 
 }

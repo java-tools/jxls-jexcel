@@ -185,6 +185,19 @@ public class JexcelTransformer extends AbstractTransformer {
         areaRef.getLastCellRef().getRow() - areaRef.getFirstCellRef().getRow(),imageBytes));
     }
 
+    public void write() throws IOException {
+        if(writableWorkbook != null){
+            writableWorkbook.write();
+            try {
+                writableWorkbook.close();
+            } catch (WriteException e) {
+                throw new IllegalStateException("Cannot close a writable workbook", e);
+            }
+        }else{
+            throw new IllegalStateException("An attempt to write an output stream with an uninitialized WritableWorkbook");
+        }
+    }
+
     private List<CellData> readCommentsFromSheet(Sheet sheet, Cell[] cells) {
         List<CellData> commentDataCells = new ArrayList<CellData>();
         for (Cell cell : cells) {
