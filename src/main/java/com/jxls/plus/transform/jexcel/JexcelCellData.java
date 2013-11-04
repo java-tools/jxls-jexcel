@@ -130,12 +130,7 @@ public class JexcelCellData extends CellData {
                 writableCell = new Boolean(col, row, (java.lang.Boolean)evaluationResult );
                 break;
             case NUMBER:
-                double value = 0;
-                if( evaluationResult instanceof Integer){
-                    value = ((Integer)evaluationResult).doubleValue();
-                }else{
-                    value = (Double) evaluationResult;
-                }
+                double value = ((java.lang.Number)evaluationResult).doubleValue();
                 writableCell = new Number(col, row, value);
                 break;
             case FORMULA:
