@@ -173,7 +173,7 @@ class JexcelCellDataTest extends Specification{
     def "test hyperlink cell"(){
         setup:
             JexcelCellData cellData = JexcelCellData.createCellData(new CellRef("sheet 2", 1, 2), writableWorkbook.getSheet(1).getCell(2, 1))
-            def context = new JexcelContext()
+            def context = new JexcelTransformer().createInitialContext()
       when:
             cellData.writeToCell(writableWorkbook.getSheet(1), 2, 1, context)
       then:

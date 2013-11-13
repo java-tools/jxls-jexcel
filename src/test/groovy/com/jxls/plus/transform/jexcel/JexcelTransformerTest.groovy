@@ -69,6 +69,18 @@ class JexcelTransformerTest extends Specification{
         workbookBytes = outputStream.toByteArray()
     }
 
+    def "test create initial context"(){
+        given:
+            InputStream inputStream = new BufferedInputStream(new ByteArrayInputStream(workbookBytes))
+            OutputStream outputStream = new BufferedOutputStream(new ByteArrayOutputStream())
+            def jexcelTransformer = JexcelTransformer.createTransformer(inputStream, outputStream)
+        when:
+            Context context = jexcelTransformer.createInitialContext()
+        then:
+            context != null
+            context.getVar(JexcelTransformer.JEXCEL_CONTEXT_KEY) instanceof JexcelUtil
+    }
+
     def "test template cells storage"(){
         when:
             InputStream inputStream = new BufferedInputStream(new ByteArrayInputStream(workbookBytes))

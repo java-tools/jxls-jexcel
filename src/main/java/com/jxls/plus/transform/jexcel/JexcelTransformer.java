@@ -18,11 +18,15 @@ import java.util.List;
  */
 public class JexcelTransformer extends AbstractTransformer {
     static Logger logger = LoggerFactory.getLogger(JexcelTransformer.class);
+    public static final String JEXCEL_CONTEXT_KEY = "util";
 
     public static final int MAX_COLUMN_TO_READ_COMMENT = 50;
 
     Workbook workbook;
     WritableWorkbook writableWorkbook;
+
+    public JexcelTransformer() {
+    }
 
     private JexcelTransformer(Workbook workbook, WritableWorkbook writableWorkbook) {
         this.workbook = workbook;
@@ -35,6 +39,13 @@ public class JexcelTransformer extends AbstractTransformer {
         JexcelTransformer transformer = new JexcelTransformer(workbook, writableWorkbook);
         transformer.readCellData();
         return transformer;
+    }
+
+    @Override
+    public Context createInitialContext() {
+        Context context = new Context();
+        context.putVar(JEXCEL_CONTEXT_KEY, new JexcelUtil());
+        return context;
     }
 
     private void readCellData(){
