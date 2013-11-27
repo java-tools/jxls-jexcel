@@ -179,10 +179,6 @@ public class JexcelTransformer extends AbstractTransformer {
         return commentedCells;
     }
 
-    public void addImage(AreaRef areaRef, int imageIdx) {
-        throw new UnsupportedOperationException("Adding an image using image index is not supported");
-    }
-
     public void addImage(AreaRef areaRef, byte[] imageBytes, ImageType imageType) {
         if( imageType == null ){
             throw new IllegalArgumentException("Image type is undefined");
