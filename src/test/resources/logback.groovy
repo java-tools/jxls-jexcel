@@ -11,4 +11,4 @@ appender("CONSOLE", ConsoleAppender) {
 
 root(WARN, ['CONSOLE'])
 
-logger("com.jxls.plus", DEBUG, ["CONSOLE"])
+logger("org.jxls", DEBUG, ["CONSOLE"])

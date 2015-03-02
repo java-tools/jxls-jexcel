@@ -1,10 +1,9 @@
-package com.jxls.plus.transform.jexcel;
+package org.jxls.transform.jexcel;
 
-import com.jxls.plus.common.Context;
+import org.jxls.common.Context;
 import jxl.write.WritableCell;
 import jxl.write.WritableSheet;
 import jxl.write.WriteException;
-import jxl.write.biff.RowsExceededException;
 
 /**
  * Defines an interface for a cell value which knows how to write itself to a cell

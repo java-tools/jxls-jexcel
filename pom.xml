@@ -2,11 +2,11 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.jxls</groupId>
-    <artifactId>jxls-plus-jexcel</artifactId>
+    <groupId>org.jxls</groupId>
+    <artifactId>jxls-jexcel</artifactId>
     <packaging>jar</packaging>
-    <version>1.0-SNAPSHOT</version>
-    <name>jxls-plus-jexcel</name>
+    <version>2.0.0-SNAPSHOT</version>
+    <name>jxls-jexcel</name>
     <url>http://maven.apache.org</url>
 
     <properties>
@@ -70,9 +70,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.jxls</groupId>
-            <artifactId>jxls-plus</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <groupId>org.jxls</groupId>
+            <artifactId>jxls</artifactId>
+            <version>2.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>net.sourceforge.jexcelapi</groupId>

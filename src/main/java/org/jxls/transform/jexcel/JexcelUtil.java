@@ -1,6 +1,6 @@
-package com.jxls.plus.transform.jexcel;
+package org.jxls.transform.jexcel;
 
-import com.jxls.plus.builder.xls.XlsCommentAreaBuilder;
+import org.jxls.builder.xls.XlsCommentAreaBuilder;
 import jxl.Range;
 import jxl.Sheet;
 import jxl.SheetSettings;
@@ -98,7 +98,7 @@ public class JexcelUtil {
         if(cellComment == null ) return false;
         String[] commentLines = cellComment.split("\\n");
         for (String commentLine : commentLines) {
-            if( (commentLine != null) && XlsCommentAreaBuilder.isCommandString( commentLine.trim() ) ){
+            if( (commentLine != null) && XlsCommentAreaBuilder.isCommandString(commentLine.trim()) ){
                 return true;
             }
         }

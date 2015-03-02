@@ -1,7 +1,7 @@
-package com.jxls.plus.transform.jexcel;
+package org.jxls.transform.jexcel;
 
-import com.jxls.plus.common.*;
-import com.jxls.plus.transform.AbstractTransformer;
+import org.jxls.common.*;
+import org.jxls.transform.AbstractTransformer;
 import jxl.*;
 import jxl.read.biff.BiffException;
 import jxl.write.*;

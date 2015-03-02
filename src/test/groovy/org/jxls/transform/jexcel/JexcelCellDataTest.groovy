@@ -1,6 +1,6 @@
-package com.jxls.plus.transform.jexcel
+package org.jxls.transform.jexcel
 
-import com.jxls.plus.common.Context
+import org.jxls.common.Context
 import jxl.Hyperlink
 import jxl.Workbook
 import jxl.write.Blank
@@ -10,7 +10,7 @@ import jxl.write.WritableSheet
 import jxl.write.WritableWorkbook
 import jxl.write.Number
 
-import com.jxls.plus.common.CellRef
+import org.jxls.common.CellRef
 import spock.lang.Ignore
 import spock.lang.Specification
 

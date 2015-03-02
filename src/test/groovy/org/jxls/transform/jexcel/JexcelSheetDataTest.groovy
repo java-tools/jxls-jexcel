@@ -1,4 +1,4 @@
-package com.jxls.plus.transform.jexcel
+package org.jxls.transform.jexcel
 
 import jxl.write.Blank
 import jxl.write.Formula
@@ -7,12 +7,11 @@ import jxl.write.WritableSheet
 import jxl.write.WritableWorkbook
 import spock.lang.Specification
 
-
 /**
  * @author Leonid Vysochyn
- * Date: 2/1/12 2:03 PM
+ * Date: 2/1/12 12:05 PM
  */
-class JexcelRowDataTest extends Specification{
+class JexcelSheetDataTest extends Specification{
     WritableWorkbook wb;
     BufferedOutputStream outputStream;
 
@@ -42,18 +41,15 @@ class JexcelRowDataTest extends Specification{
         sheet2.addCell(new Blank(0, 0))
     }
 
-    def "test createRowData"(){
+    def "test read sheet data"(){
         when:
-            def rowData = JexcelRowData.createRowData(wb.getSheet(0), 1);
+            WritableSheet sheet = wb.getSheet(0)
+            JexcelSheetData sheetData = JexcelSheetData.createSheetData(sheet)
         then:
-            rowData.getHeight() == wb.getSheet(0).getRowView(1).getSize()
-            rowData.getNumberOfCells() == 4
-            rowData.getCellData(2).getCellValue() == '${y*y}'
-            rowData.getCellData(2).getSheetName() == "sheet 1"
-    }
-    
-    def "test createRowData for null row"(){
-        expect:
-            JexcelRowData.createRowData(wb.getSheet(0), 5).getNumberOfCells() == 0
+            sheet.getName() == sheetData.getSheetName()
+            sheet.getColumnView(2).getSize() == sheetData.getColumnWidth(2)
+            sheet.getColumnView(1).getSize() == sheetData.getColumnWidth(1)
+            sheet.getRowView(0).getSize() == sheetData.getRowData(0).getHeight()
+            3 == sheetData.getNumberOfRows()
     }
 }

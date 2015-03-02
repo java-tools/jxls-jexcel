@@ -1,4 +1,4 @@
-package com.jxls.plus.transform.jexcel
+package org.jxls.transform.jexcel
 
 import jxl.Cell
 import jxl.CellType
@@ -18,11 +18,11 @@ import jxl.write.Number
 import spock.lang.Specification
 
 
-import com.jxls.plus.common.Context
-import com.jxls.plus.common.CellData
-import com.jxls.plus.common.CellRef
-import com.jxls.plus.common.AreaRef
-import com.jxls.plus.common.ImageType
+import org.jxls.common.Context
+import org.jxls.common.CellData
+import org.jxls.common.CellRef
+import org.jxls.common.AreaRef
+import org.jxls.common.ImageType
 
 /**
  * @author Leonid Vysochyn

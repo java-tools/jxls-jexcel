@@ -1,8 +1,8 @@
-package com.jxls.plus.transform.jexcel;
+package org.jxls.transform.jexcel;
 
-import com.jxls.plus.common.CellData;
-import com.jxls.plus.common.CellRef;
-import com.jxls.plus.common.RowData;
+import org.jxls.common.CellData;
+import org.jxls.common.CellRef;
+import org.jxls.common.RowData;
 import jxl.Cell;
 import jxl.CellView;
 import jxl.Sheet;

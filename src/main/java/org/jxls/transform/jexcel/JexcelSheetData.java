@@ -1,11 +1,8 @@
-package com.jxls.plus.transform.jexcel;
+package org.jxls.transform.jexcel;
 
-import com.jxls.plus.common.SheetData;
+import org.jxls.common.SheetData;
 import jxl.Range;
 import jxl.Sheet;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Leonid Vysochyn
