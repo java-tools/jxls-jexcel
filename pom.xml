@@ -18,6 +18,11 @@
         <spockVersion>1.0-groovy-2.4</spockVersion>
     </properties>
 
+    <scm>
+        <developerConnection>scm:git:https://bitbucket.org/leonate/jxls-jexcel.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
     <build>
         <plugins>
           <plugin>
@@ -46,11 +51,15 @@
               </executions>
           </plugin>
 
-          <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-release-plugin</artifactId>
-              <version>2.5.2</version>
-          </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5.2</version>
+                <configuration>
+                    <pushChanges>false</pushChanges>
+                    <localCheckout>true</localCheckout>
+                </configuration>
+            </plugin>
       </plugins>
     </build>
 
@@ -123,10 +132,6 @@
             <name>jXLS Releases Repository at Sourceforge</name>
             <url>scp://shell.sourceforge.net/home/project-web/jxls/htdocs/repository/releases</url>
         </repository>
-        <site>
-            <id>jxls.sf.net</id>
-            <url>scp://shell.sourceforge.net/home/project-web/jxls/htdocs</url>
-        </site>
     </distributionManagement>
 
     <repositories>
