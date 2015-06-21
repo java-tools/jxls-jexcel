@@ -1,11 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jxls</groupId>
     <artifactId>jxls-jexcel</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
     <name>jxls-jexcel</name>
     <url>http://jxls.sf.net</url>
 
@@ -129,24 +127,26 @@
         </dependency>
     </dependencies>
 
+    <repositories>
+        <repository>
+            <id>jxls</id>
+            <name>Jxls repo at Sourceforge</name>
+            <url>http://jxls.sourceforge.net/repository/releases/</url>
+        </repository>
+    </repositories>
+
     <distributionManagement>
-        <snapshotRepository>
-            <id>jxls.snapshots</id>
-            <name>jXLS Snapshot Repository at Sourceforge</name>
-            <url>scp://shell.sourceforge.net/home/project-web/jxls/htdocs/repository/snapshots</url>
-        </snapshotRepository>
         <repository>
             <id>jxls.releases</id>
             <name>jXLS Releases Repository at Sourceforge</name>
             <url>scp://shell.sourceforge.net/home/project-web/jxls/htdocs/repository/releases</url>
         </repository>
+        <snapshotRepository>
+            <id>jxls.snapshots</id>
+            <name>jXLS Snapshot Repository at Sourceforge</name>
+            <url>scp://shell.sourceforge.net/home/project-web/jxls/htdocs/repository/snapshots</url>
+        </snapshotRepository>
     </distributionManagement>
 
-    <repositories>
-        <repository>
-            <id>jxls.releases</id>
-            <name>Jxls repo at Sourceforge</name>
-            <url>http://jxls.sourceforge.net/repository/releases/</url>
-        </repository>
-    </repositories>
+
 </project>
