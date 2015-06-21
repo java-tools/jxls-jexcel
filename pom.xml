@@ -3,7 +3,7 @@
     <groupId>org.jxls</groupId>
     <artifactId>jxls-jexcel</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <name>jxls-jexcel</name>
     <url>http://jxls.sf.net</url>
 
@@ -18,7 +18,7 @@
 
     <scm>
         <developerConnection>scm:git:https://bitbucket.org/leonate/jxls-jexcel.git</developerConnection>
-        <tag>r1.0.0</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <build>
