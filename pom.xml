@@ -16,7 +16,6 @@
         <gmavenProviderSelection>2.0</gmavenProviderSelection>
         <groovyVersion>2.0.0</groovyVersion>
         <spockVersion>1.0-groovy-2.4</spockVersion>
-        <jxlsVersion>2.0.0</jxlsVersion>
     </properties>
 
     <build>
@@ -60,7 +59,7 @@
         <dependency>
             <groupId>org.jxls</groupId>
             <artifactId>jxls</artifactId>
-            <version>${jxlsVersion}</version>
+            <version>[2.0.0,)</version>
         </dependency>
         <dependency>
             <groupId>net.sourceforge.jexcelapi</groupId>
