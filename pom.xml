@@ -129,19 +129,6 @@
         </dependency>
     </dependencies>
 
-    <distributionManagement>
-        <snapshotRepository>
-            <id>jxls.snapshots</id>
-            <name>jXLS Snapshot Repository at Sourceforge</name>
-            <url>scp://shell.sourceforge.net/home/project-web/jxls/htdocs/repository/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>jxls.releases</id>
-            <name>jXLS Releases Repository at Sourceforge</name>
-            <url>scp://shell.sourceforge.net/home/project-web/jxls/htdocs/repository/releases</url>
-        </repository>
-    </distributionManagement>
-
     <repositories>
         <repository>
             <id>jxls.releases</id>
@@ -149,4 +136,19 @@
             <url>http://jxls.sourceforge.net/repository/releases/</url>
         </repository>
     </repositories>
+
+    <distributionManagement>
+        <repository>
+            <id>jxls.releases</id>
+            <name>jXLS Releases Repository at Sourceforge</name>
+            <url>scp://shell.sourceforge.net/home/project-web/jxls/htdocs/repository/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>jxls.snapshots</id>
+            <name>jXLS Snapshot Repository at Sourceforge</name>
+            <url>scp://shell.sourceforge.net/home/project-web/jxls/htdocs/repository/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+
 </project>
