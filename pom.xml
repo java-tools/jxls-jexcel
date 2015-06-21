@@ -131,7 +131,7 @@
 
     <repositories>
         <repository>
-            <id>jxls.releases</id>
+            <id>jxls</id>
             <name>Jxls repo at Sourceforge</name>
             <url>http://jxls.sourceforge.net/repository/releases/</url>
         </repository>
