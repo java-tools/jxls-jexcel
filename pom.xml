@@ -4,8 +4,21 @@
     <artifactId>jxls-jexcel</artifactId>
     <packaging>jar</packaging>
     <version>1.0.1-SNAPSHOT</version>
-    <name>jxls-jexcel</name>
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>Jexcel API Transformer implementation for Jxls library</description>
     <url>http://jxls.sf.net</url>
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <name>Leonid Vysochyn</name>
+            <email>leonate@gmail.com</email>
+        </developer>
+    </developers>
 
     <properties>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -17,7 +30,9 @@
     </properties>
 
     <scm>
+        <connection>scm:git:http://bitbucket.org/leonate/jxls-jexcel.git</connection>
         <developerConnection>scm:git:https://bitbucket.org/leonate/jxls-jexcel.git</developerConnection>
+        <url>https://bitbucket.org/leonate/jxls-jexcel</url>
         <tag>HEAD</tag>
     </scm>
 
@@ -64,11 +79,77 @@
                 <configuration>
                     <pushChanges>false</pushChanges>
                     <localCheckout>true</localCheckout>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <useReleaseProfile>false</useReleaseProfile>
+                    <releaseProfiles>release</releaseProfiles>
+                    <goals>deploy</goals>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.3</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
                 </configuration>
             </plugin>
       </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>2.2.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>2.9.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.5</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
     <dependencies>
         <dependency>
@@ -127,24 +208,10 @@
         </dependency>
     </dependencies>
 
-    <repositories>
-        <repository>
-            <id>jxls</id>
-            <name>Jxls repo at Sourceforge</name>
-            <url>http://jxls.sourceforge.net/repository/releases/</url>
-        </repository>
-    </repositories>
-
     <distributionManagement>
-        <repository>
-            <id>jxls.releases</id>
-            <name>jXLS Releases Repository at Sourceforge</name>
-            <url>scp://shell.sourceforge.net/home/project-web/jxls/htdocs/repository/releases</url>
-        </repository>
         <snapshotRepository>
-            <id>jxls.snapshots</id>
-            <name>jXLS Snapshot Repository at Sourceforge</name>
-            <url>scp://shell.sourceforge.net/home/project-web/jxls/htdocs/repository/snapshots</url>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
 
