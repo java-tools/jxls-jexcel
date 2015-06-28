@@ -17,6 +17,7 @@ class JexcelRowDataTest extends Specification{
     BufferedOutputStream outputStream;
 
     def setup(){
+        Locale.setDefault(Locale.ENGLISH)
         outputStream = new BufferedOutputStream(new ByteArrayOutputStream());
         wb = jxl.Workbook.createWorkbook(outputStream)
         WritableSheet sheet = wb.createSheet("sheet 1", 0)

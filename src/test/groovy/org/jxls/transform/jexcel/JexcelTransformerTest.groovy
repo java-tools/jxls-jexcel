@@ -34,6 +34,7 @@ class JexcelTransformerTest extends Specification{
     WritableCellFormat customStyle;
 
     def setup(){
+        Locale.setDefault(Locale.ENGLISH)
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream()
         WritableWorkbook writableWorkbook = Workbook.createWorkbook(outputStream)
         WritableFont font = new WritableFont(WritableFont.COURIER, 24, WritableFont.NO_BOLD, true)
