@@ -23,6 +23,7 @@ class JexcelCellDataTest extends Specification{
     WritableWorkbook writableWorkbook;
 
     def setup(){
+        Locale.setDefault(Locale.ENGLISH)
         def baos = new ByteArrayOutputStream()
         writableWorkbook = Workbook.createWorkbook(baos)
         WritableSheet sheet = writableWorkbook.createSheet("sheet 1", 0)
