@@ -11,6 +11,8 @@ import jxl.write.WritableWorkbook
 import jxl.write.Number
 
 import org.jxls.common.CellRef
+import org.jxls.transform.TransformationConfig
+import org.jxls.transform.Transformer
 import spock.lang.Ignore
 import spock.lang.Specification
 
@@ -74,6 +76,8 @@ class JexcelCellDataTest extends Specification{
             JexcelCellData cellData = JexcelCellData.createCellData(new CellRef("sheet 1", 0, 1), workbook.getSheet(0).getCell(1, 0))
             def context = new Context()
             context.putVar("x", 35)
+            cellData.transformer = Mock(Transformer)
+            cellData.getTransformer().getTransformationConfig() >> new TransformationConfig()
         expect:
             cellData.evaluate(context) == 35
     }
@@ -84,6 +88,8 @@ class JexcelCellDataTest extends Specification{
             def context = new Context()
             context.putVar("x", 2)
             context.putVar("y", 3)
+            cellData.transformer = Mock(Transformer)
+            cellData.getTransformer().getTransformationConfig() >> new TransformationConfig()
         expect:
             cellData.evaluate(context) == "4x and 6y"
     }
@@ -93,6 +99,8 @@ class JexcelCellDataTest extends Specification{
             JexcelCellData cellData = JexcelCellData.createCellData(new CellRef("sheet 1", 1, 3),workbook.getSheet(0).getCell(3,1))
             def context = new Context()
             context.putVar("x", 35)
+            cellData.transformer = Mock(Transformer)
+            cellData.getTransformer().getTransformationConfig() >> new TransformationConfig()
         expect:
             cellData.evaluate(context) == "35 words"
     }
@@ -103,6 +111,8 @@ class JexcelCellDataTest extends Specification{
         context.putVar("x", 2)
         context.putVar("y", 3)
         context.putVar("cur", '$')
+        cellData.transformer = Mock(Transformer)
+        cellData.getTransformer().getTransformationConfig() >> new TransformationConfig()
         expect:
             cellData.evaluate(context) == '4x and 6 $'
     }
@@ -112,6 +122,8 @@ class JexcelCellDataTest extends Specification{
             JexcelCellData cellData = JexcelCellData.createCellData(new CellRef("sheet 1", 0, 1), writableWorkbook.getSheet(0).getCell(1, 0))
             def context = new Context()
             context.putVar("x", 35)
+            cellData.transformer = Mock(Transformer)
+            cellData.getTransformer().getTransformationConfig() >> new TransformationConfig()
         when:
             cellData.writeToCell(writableWorkbook.getSheet(1), 0, 0, context)
         then:
@@ -122,6 +134,8 @@ class JexcelCellDataTest extends Specification{
         setup:
             JexcelCellData cellData = JexcelCellData.createCellData(new CellRef("sheet 1", 0, 3), writableWorkbook.getSheet(0).getCell(3, 0))
             def context = new Context()
+            cellData.transformer = Mock(Transformer)
+            cellData.getTransformer().getTransformationConfig() >> new TransformationConfig()
         when:
             cellData.writeToCell(writableWorkbook.getSheet(1), 1, 1, context)
         then:
@@ -134,6 +148,8 @@ class JexcelCellDataTest extends Specification{
             def context = new Context()
             context.putVar("myvar", 2)
             context.putVar("myvar2", 3)
+            cellData.transformer = Mock(Transformer)
+            cellData.getTransformer().getTransformationConfig() >> new TransformationConfig()
 //            writableWorkbook.getSheet(0).createRow(7).createCell(7)
         when:
             cellData.writeToCell(writableWorkbook.getSheet(0), 7, 7, context)
@@ -159,6 +175,8 @@ class JexcelCellDataTest extends Specification{
         setup:
             JexcelCellData cellData = JexcelCellData.createCellData(new CellRef("sheet 1", 1, 5), writableWorkbook.getSheet(0).getCell(5, 1))
             def context = new Context()
+            cellData.transformer = Mock(Transformer)
+            cellData.getTransformer().getTransformationConfig() >> new TransformationConfig()
         when:
             cellData.writeToCell(writableWorkbook.getSheet(1), 1, 1, context)
         then:
@@ -175,6 +193,8 @@ class JexcelCellDataTest extends Specification{
         setup:
             JexcelCellData cellData = JexcelCellData.createCellData(new CellRef("sheet 2", 1, 2), writableWorkbook.getSheet(1).getCell(2, 1))
             def context = new JexcelTransformer().createInitialContext()
+            cellData.transformer = Mock(Transformer)
+            cellData.getTransformer().getTransformationConfig() >> new TransformationConfig()
       when:
             cellData.writeToCell(writableWorkbook.getSheet(1), 2, 1, context)
       then:

@@ -52,7 +52,7 @@ public class JexcelTransformer extends AbstractTransformer {
         int numberOfSheets = workbook.getNumberOfSheets();
         for(int i = 0; i < numberOfSheets; i++){
             Sheet sheet = workbook.getSheet(i);
-            SheetData sheetData = JexcelSheetData.createSheetData(sheet);
+            SheetData sheetData = JexcelSheetData.createSheetData(sheet, this);
             sheetMap.put(sheetData.getSheetName(), sheetData);
         }
     }
