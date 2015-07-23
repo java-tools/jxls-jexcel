@@ -45,7 +45,7 @@ class JexcelSheetDataTest extends Specification{
     def "test read sheet data"(){
         when:
             WritableSheet sheet = wb.getSheet(0)
-            JexcelSheetData sheetData = JexcelSheetData.createSheetData(sheet)
+            JexcelSheetData sheetData = JexcelSheetData.createSheetData(sheet, null)
         then:
             sheet.getName() == sheetData.getSheetName()
             sheet.getColumnView(2).getSize() == sheetData.getColumnWidth(2)

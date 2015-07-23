@@ -45,7 +45,7 @@ class JexcelRowDataTest extends Specification{
 
     def "test createRowData"(){
         when:
-            def rowData = JexcelRowData.createRowData(wb.getSheet(0), 1);
+            def rowData = JexcelRowData.createRowData(wb.getSheet(0), 1, null);
         then:
             rowData.getHeight() == wb.getSheet(0).getRowView(1).getSize()
             rowData.getNumberOfCells() == 4
@@ -55,6 +55,6 @@ class JexcelRowDataTest extends Specification{
     
     def "test createRowData for null row"(){
         expect:
-            JexcelRowData.createRowData(wb.getSheet(0), 5).getNumberOfCells() == 0
+            JexcelRowData.createRowData(wb.getSheet(0), 5, null).getNumberOfCells() == 0
     }
 }

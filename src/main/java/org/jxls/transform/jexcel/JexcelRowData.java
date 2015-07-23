@@ -13,13 +13,14 @@ import jxl.Sheet;
 public class JexcelRowData extends RowData {
     Cell[] cells;
 
-    public static RowData createRowData(Sheet sheet, int rowNum){
-        return createRowData(sheet.getName(), sheet.getRow(rowNum), sheet.getRowView(rowNum));
+    public static RowData createRowData(Sheet sheet, int rowNum, JexcelTransformer transformer){
+        return createRowData(sheet.getName(), sheet.getRow(rowNum), sheet.getRowView(rowNum), transformer);
     }
 
-    public static RowData createRowData(String sheetName, Cell[] cells, CellView rowCellView){
+    public static RowData createRowData(String sheetName, Cell[] cells, CellView rowCellView, JexcelTransformer transformer){
         if( cells == null ) return null;
         JexcelRowData rowData = new JexcelRowData();
+        rowData.setTransformer( transformer );
         rowData.cells = cells;
         rowData.height = rowCellView.getSize();
         int numberOfCells = cells.length;
@@ -27,6 +28,7 @@ public class JexcelRowData extends RowData {
             Cell cell = cells[cellIndex];
             if(cell != null ){
                 CellData cellData = JexcelCellData.createCellData(new CellRef(sheetName, cell.getRow(), cellIndex), cell);
+                cellData.setTransformer(transformer);
                 rowData.addCellData(cellData);
             }else{
                 rowData.addCellData(null);
