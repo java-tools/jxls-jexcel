@@ -1,15 +1,17 @@
 package org.jxls.transform.jexcel;
 
-import org.jxls.common.*;
-import org.jxls.transform.AbstractTransformer;
 import jxl.*;
 import jxl.read.biff.BiffException;
 import jxl.write.*;
 import jxl.write.biff.RowsExceededException;
+import org.jxls.common.*;
+import org.jxls.transform.AbstractTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -217,4 +219,28 @@ public class JexcelTransformer extends AbstractTransformer {
         }
         return commentDataCells;
     }
+
+    @Override
+    public void deleteSheet(String sheetName) {
+        Integer sheetIndex = findSheetIndex(sheetName);
+        writableWorkbook.removeSheet(sheetIndex);
+    }
+
+    @Override
+    public void setHidden(String sheetName, boolean hidden) {
+        Sheet sheet = writableWorkbook.getSheet(sheetName);
+        sheet.getSettings().setHidden(hidden);
+    }
+
+    private Integer findSheetIndex(String sheetName) {
+        Integer index = null;
+        final Sheet[] sheets = workbook.getSheets();
+        for(int i=0;i<sheets.length && index == null; i++) {
+            if(sheets[i].getName().equals(sheetName)) {
+                index = i;
+            }
+        }
+        return index;
+    }
+
 }
