@@ -15,6 +15,7 @@ import jxl.write.WritableFont
 import jxl.write.WritableSheet
 import jxl.write.WritableWorkbook
 import jxl.write.Number
+import spock.lang.Ignore
 import spock.lang.Specification
 
 
@@ -311,7 +312,7 @@ class JexcelTransformerTest extends Specification{
             formulaCells.contains(new CellData("sheet 1", 1, 1, CellData.CellType.FORMULA, "SUM(A1:A3)"))
             formulaCells.contains(new CellData("sheet 1", 2, 4, CellData.CellType.STRING, '$[${myvar}*SUM(A1:A5) + ${myvar2}]'))
     }
-
+    @Ignore("the target cell setting was moved to XlsArea")
     def "test get target cells"(){
         when:
             InputStream inputStream = new BufferedInputStream(new ByteArrayInputStream(workbookBytes))
@@ -328,6 +329,7 @@ class JexcelTransformerTest extends Specification{
             jexcelTransformer.getTargetCellRef(new CellRef("sheet 1",2,1)).toArray() == [new CellRef("sheet 2",20,11), new CellRef("sheet 1",20,12)]
     }
 
+    @Ignore("this functionality is not used")
     def "test reset target cells"(){
         when:
             InputStream inputStream = new BufferedInputStream(new ByteArrayInputStream(workbookBytes))

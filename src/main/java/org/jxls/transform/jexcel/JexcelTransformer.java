@@ -66,7 +66,6 @@ public class JexcelTransformer extends AbstractTransformer {
     public void transform(CellRef srcCellRef, CellRef targetCellRef, Context context) {
         CellData cellData = this.getCellData(srcCellRef);
         if(cellData != null){
-            cellData.addTargetPos(targetCellRef);
             if(targetCellRef == null || targetCellRef.getSheetName() == null){
                 logger.info("Target cellRef is null or has empty sheet name, cellRef=" + targetCellRef);
                 return;
