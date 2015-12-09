@@ -221,6 +221,7 @@ public class JexcelTransformer extends AbstractTransformer {
 
     @Override
     public void deleteSheet(String sheetName) {
+        super.deleteSheet(sheetName);
         Integer sheetIndex = findSheetIndex(sheetName);
         writableWorkbook.removeSheet(sheetIndex);
     }
