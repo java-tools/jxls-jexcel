@@ -130,6 +130,15 @@ public class JexcelTransformer extends AbstractTransformer {
         }
     }
 
+    @Override
+    public void resetArea(AreaRef areaRef) {
+        WritableSheet destSheet = writableWorkbook.getSheet(areaRef.getSheetName());
+        Range[] mergedRegions = destSheet.getMergedCells();
+        for(Range mergedRegion : mergedRegions){
+            destSheet.unmergeCells(mergedRegion);
+        }
+    }
+
     public void setFormula(CellRef cellRef, String formulaString) {
         if(cellRef == null || cellRef.getSheetName() == null ) return;
         WritableSheet sheet = writableWorkbook.getSheet(cellRef.getSheetName());
