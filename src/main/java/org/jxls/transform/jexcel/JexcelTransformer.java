@@ -43,8 +43,7 @@ public class JexcelTransformer extends AbstractTransformer {
         return transformer;
     }
 
-    @Override
-    public Context createInitialContext() {
+    public static Context createInitialContext() {
         Context context = new Context();
         context.putVar(JEXCEL_CONTEXT_KEY, new JexcelUtil());
         return context;

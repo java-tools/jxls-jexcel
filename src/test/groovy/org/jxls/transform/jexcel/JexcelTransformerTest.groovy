@@ -77,7 +77,7 @@ class JexcelTransformerTest extends Specification{
             OutputStream outputStream = new BufferedOutputStream(new ByteArrayOutputStream())
             def jexcelTransformer = JexcelTransformer.createTransformer(inputStream, outputStream)
         when:
-            Context context = jexcelTransformer.createInitialContext()
+            Context context = JexcelTransformer.createInitialContext()
         then:
             context != null
             context.getVar(JexcelTransformer.JEXCEL_CONTEXT_KEY) instanceof JexcelUtil
