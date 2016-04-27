@@ -147,7 +147,7 @@ class JexcelTransformerTest extends Specification{
             def writableWorkbook = jexcelTransformer.getWritableWorkbook()
             WritableSheet sheet = writableWorkbook.getSheet(0)
         when:
-            jexcelTransformer.transform(new CellRef("sheet 1", 0, 1), new CellRef("sheet 1", 7, 7), context)
+            jexcelTransformer.transform(new CellRef("sheet 1", 0, 1), new CellRef("sheet 1", 7, 7), context, true)
         then:
 
             sheet.getCell(7, 7).contents == "Abcde"
@@ -165,7 +165,7 @@ class JexcelTransformerTest extends Specification{
             context.putVar("x", 3)
             context.putVar("y", 5)
         when:
-            jexcelTransformer.transform(new CellRef("sheet 1",0, 2), new CellRef("sheet 2",7, 7), context)
+            jexcelTransformer.transform(new CellRef("sheet 1", 0, 2), new CellRef("sheet 2", 7, 7), context, false)
         then:
             WritableSheet sheet = jexcelTransformer.getWritableWorkbook().getSheet("sheet 2")
             sheet.getCell(7, 7).getType() == CellType.NUMBER
@@ -179,7 +179,7 @@ class JexcelTransformerTest extends Specification{
             def jexcelTransformer = JexcelTransformer.createTransformer(inputStream, outputStream)
             def context = new Context()
         when:
-            jexcelTransformer.transform(new CellRef("sheet 1", 1, 1), new CellRef("sheet 2", 7, 7), context)
+            jexcelTransformer.transform(new CellRef("sheet 1", 1, 1), new CellRef("sheet 2", 7, 7), context, false)
         then:
             WritableSheet sheet = jexcelTransformer.getWritableWorkbook().getSheet("sheet 2")
             sheet.getCell(7, 7).type == CellType.ERROR
@@ -196,7 +196,7 @@ class JexcelTransformerTest extends Specification{
             def context = new Context()
             context.putVar("x", "Abcde")
         when:
-            jexcelTransformer.transform(new CellRef("sheet 1", 0, 1), new CellRef("sheet2", 7, 7), context)
+            jexcelTransformer.transform(new CellRef("sheet 1", 0, 1), new CellRef("sheet2", 7, 7), context, false)
         then:
 //            WritableSheet sheet = jexcelTransformer.getWritableWorkbook().getSheet("sheet 1")
             WritableSheet sheet1 = jexcelTransformer.getWritableWorkbook().getSheet("sheet2")
@@ -215,8 +215,8 @@ class JexcelTransformerTest extends Specification{
             def context2 = new Context()
             context2.putVar("x", "Fghij")
         when:
-            jexcelTransformer.transform(new CellRef("sheet 1",0, 1), new CellRef("sheet 1",5, 1), context1)
-            jexcelTransformer.transform(new CellRef("sheet 1",0, 1), new CellRef("sheet 2",10, 1), context2)
+            jexcelTransformer.transform(new CellRef("sheet 1", 0, 1), new CellRef("sheet 1", 5, 1), context1, false)
+            jexcelTransformer.transform(new CellRef("sheet 1", 0, 1), new CellRef("sheet 2", 10, 1), context2, false)
         then:
             def writableWorkbook = jexcelTransformer.getWritableWorkbook()
             WritableSheet sheet = writableWorkbook.getSheet("sheet 1")
@@ -235,9 +235,9 @@ class JexcelTransformerTest extends Specification{
             def context2 = new Context()
             context2.putVar("x", "Fghij")
         when:
-            jexcelTransformer.transform(new CellRef("sheet 1", 0, 1), new CellRef("sheet 1", 5, 1), context1)
-            jexcelTransformer.transform(new CellRef("sheet 1", 0, 0), new CellRef("sheet 2", 0, 1), context1)
-            jexcelTransformer.transform(new CellRef("sheet 1", 0, 1), new CellRef("sheet 2", 10, 1), context2)
+            jexcelTransformer.transform(new CellRef("sheet 1", 0, 1), new CellRef("sheet 1", 5, 1), context1, false)
+            jexcelTransformer.transform(new CellRef("sheet 1", 0, 0), new CellRef("sheet 2", 0, 1), context1, false)
+            jexcelTransformer.transform(new CellRef("sheet 1", 0, 1), new CellRef("sheet 2", 10, 1), context2, false)
         then:
             def writableWorkbook = jexcelTransformer.getWritableWorkbook()
             WritableSheet sheet = writableWorkbook.getSheet("sheet 1")
@@ -257,7 +257,7 @@ class JexcelTransformerTest extends Specification{
             context.putVar("x", 2)
             context.putVar("y", 3)
         when:
-            jexcelTransformer.transform(new CellRef("sheet 1",2, 3), new CellRef("sheet 2",7, 7), context)
+            jexcelTransformer.transform(new CellRef("sheet 1", 2, 3), new CellRef("sheet 2", 7, 7), context, false)
         then:
             WritableSheet sheet = jexcelTransformer.getWritableWorkbook().getSheet("sheet 2")
             sheet.getCell(7, 7).contents == "4x and 6y"
@@ -273,7 +273,7 @@ class JexcelTransformerTest extends Specification{
             def context = new Context()
             context.putVar("x", "Abcde")
         when:
-            jexcelTransformer.transform(new CellRef("sheet 1",0, 1), new CellRef("sheet 2",7, 7), context)
+            jexcelTransformer.transform(new CellRef("sheet 1", 0, 1), new CellRef("sheet 2", 7, 7), context, false)
         then:
             def writableWorkbook = jexcelTransformer.getWritableWorkbook()
             WritableSheet sheet1 = writableWorkbook.getSheet("sheet 1")
@@ -305,7 +305,7 @@ class JexcelTransformerTest extends Specification{
             def context = new Context()
             context.putVar("myvar", 2)
             context.putVar("myvar2", 4)
-            jexcelTransformer.transform(new CellRef("sheet 1",2,4), new CellRef("sheet 2", 10,10), context)
+            jexcelTransformer.transform(new CellRef("sheet 1", 2, 4), new CellRef("sheet 2", 10, 10), context, false)
             def formulaCells = jexcelTransformer.getFormulaCells()
         then:
             formulaCells.size() == 2
@@ -319,11 +319,11 @@ class JexcelTransformerTest extends Specification{
             OutputStream outputStream = new BufferedOutputStream(new ByteArrayOutputStream())
             def jexcelTransformer = JexcelTransformer.createTransformer(inputStream, outputStream)
             def context = new Context()
-            jexcelTransformer.transform(new CellRef("sheet 1",1,1), new CellRef("sheet 2",10,10), context)
-            jexcelTransformer.transform(new CellRef("sheet 1",1,1), new CellRef("sheet 1",10,12), context)
-            jexcelTransformer.transform(new CellRef("sheet 1",1,1), new CellRef("sheet 1",10,14), context)
-            jexcelTransformer.transform(new CellRef("sheet 1",2,1), new CellRef("sheet 2",20,11), context)
-            jexcelTransformer.transform(new CellRef("sheet 1",2,1), new CellRef("sheet 1",20,12), context)
+            jexcelTransformer.transform(new CellRef("sheet 1", 1, 1), new CellRef("sheet 2", 10, 10), context, false)
+            jexcelTransformer.transform(new CellRef("sheet 1", 1, 1), new CellRef("sheet 1", 10, 12), context, false)
+            jexcelTransformer.transform(new CellRef("sheet 1", 1, 1), new CellRef("sheet 1", 10, 14), context, false)
+            jexcelTransformer.transform(new CellRef("sheet 1", 2, 1), new CellRef("sheet 2", 20, 11), context, false)
+            jexcelTransformer.transform(new CellRef("sheet 1", 2, 1), new CellRef("sheet 1", 20, 12), context, false)
         then:
             jexcelTransformer.getTargetCellRef(new CellRef("sheet 1",1,1)).toArray() == [new CellRef("sheet 2",10,10), new CellRef("sheet 1",10,12), new CellRef("sheet 1",10,14)]
             jexcelTransformer.getTargetCellRef(new CellRef("sheet 1",2,1)).toArray() == [new CellRef("sheet 2",20,11), new CellRef("sheet 1",20,12)]
@@ -336,12 +336,12 @@ class JexcelTransformerTest extends Specification{
             OutputStream outputStream = new BufferedOutputStream(new ByteArrayOutputStream())
             def jexcelTransformer = JexcelTransformer.createTransformer(inputStream, outputStream)
             def context = new Context()
-            jexcelTransformer.transform(new CellRef("sheet 1",1,1), new CellRef("sheet 1",10,10), context)
-            jexcelTransformer.transform(new CellRef("sheet 1",2,1), new CellRef("sheet 1",20,11), context)
+            jexcelTransformer.transform(new CellRef("sheet 1", 1, 1), new CellRef("sheet 1", 10, 10), context, false)
+            jexcelTransformer.transform(new CellRef("sheet 1", 2, 1), new CellRef("sheet 1", 20, 11), context, false)
             jexcelTransformer.resetTargetCellRefs()
-            jexcelTransformer.transform(new CellRef("sheet 1",1,1), new CellRef("sheet 2",10,12), context)
-            jexcelTransformer.transform(new CellRef("sheet 1",1,1), new CellRef("sheet 1",10,14), context)
-            jexcelTransformer.transform(new CellRef("sheet 1",2,1), new CellRef("sheet 1",20,12), context)
+            jexcelTransformer.transform(new CellRef("sheet 1", 1, 1), new CellRef("sheet 2", 10, 12), context, false)
+            jexcelTransformer.transform(new CellRef("sheet 1", 1, 1), new CellRef("sheet 1", 10, 14), context, false)
+            jexcelTransformer.transform(new CellRef("sheet 1", 2, 1), new CellRef("sheet 1", 20, 12), context, false)
         then:
             jexcelTransformer.getTargetCellRef(new CellRef("sheet 1",1,1)).toArray() == [new CellRef("sheet 2",10,12), new CellRef("sheet 1",10,14)]
             jexcelTransformer.getTargetCellRef(new CellRef("sheet 1",2,1)).toArray() == [new CellRef("sheet 1",20,12)]
@@ -354,7 +354,7 @@ class JexcelTransformerTest extends Specification{
             def jexcelTransformer = JexcelTransformer.createTransformer(inputStream, outputStream)
             def context = new Context()
             jexcelTransformer.getWritableWorkbook().getSheet(0).getMergedCells().length == 1
-            jexcelTransformer.transform(new CellRef("sheet 1",0,3), new CellRef("sheet 1",10,10), context)
+            jexcelTransformer.transform(new CellRef("sheet 1", 0, 3), new CellRef("sheet 1", 10, 10), context, false)
         then:
             WritableSheet sheet = jexcelTransformer.getWritableWorkbook().getSheet("sheet 1")
             sheet.getMergedCells().length == 2

@@ -1,10 +1,27 @@
 package org.jxls.transform.jexcel;
 
-import jxl.*;
+import jxl.Cell;
+import jxl.CellFeatures;
+import jxl.CellView;
+import jxl.Range;
+import jxl.Sheet;
+import jxl.Workbook;
 import jxl.read.biff.BiffException;
-import jxl.write.*;
+import jxl.write.Blank;
+import jxl.write.Formula;
+import jxl.write.WritableCell;
+import jxl.write.WritableImage;
+import jxl.write.WritableSheet;
+import jxl.write.WritableWorkbook;
+import jxl.write.WriteException;
 import jxl.write.biff.RowsExceededException;
-import org.jxls.common.*;
+import org.jxls.common.AreaRef;
+import org.jxls.common.CellData;
+import org.jxls.common.CellRef;
+import org.jxls.common.Context;
+import org.jxls.common.ImageType;
+import org.jxls.common.RowData;
+import org.jxls.common.SheetData;
 import org.jxls.transform.AbstractTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,26 +79,26 @@ public class JexcelTransformer extends AbstractTransformer {
         return writableWorkbook;
     }
 
-    public void transform(CellRef srcCellRef, CellRef targetCellRef, Context context) {
+    public void transform(CellRef srcCellRef, CellRef targetCellRef, Context context, boolean updateRowHeightFlag) {
         CellData cellData = this.getCellData(srcCellRef);
         if (cellData != null) {
-            if (targetCellRef == null || targetCellRef.getSheetName() == null) {
+            String targetSheetName = targetCellRef.getSheetName();
+            if (targetCellRef == null || targetSheetName == null) {
                 logger.info("Target cellRef is null or has empty sheet name, cellRef=" + targetCellRef);
                 return;
             }
-            WritableSheet destSheet = writableWorkbook.getSheet(targetCellRef.getSheetName());
+            WritableSheet destSheet = writableWorkbook.getSheet(targetSheetName);
+            String srcSheetName = srcCellRef.getSheetName();
             if (destSheet == null) {
-                int numberOfSheets = writableWorkbook.getNumberOfSheets();
-                destSheet = writableWorkbook.createSheet(targetCellRef.getSheetName(), numberOfSheets);
-                JexcelUtil.copySheetProperties(workbook.getSheet(srcCellRef.getSheetName()), destSheet);
+                destSheet = createSheet(srcSheetName, targetSheetName);
             }
-            SheetData sheetData = sheetMap.get(srcCellRef.getSheetName());
+            SheetData sheetData = sheetMap.get(srcSheetName);
             if (!isIgnoreColumnProps()) {
                 CellView columnView = destSheet.getColumnView(targetCellRef.getCol());
                 columnView.setSize(sheetData.getColumnWidth(srcCellRef.getCol()));
                 destSheet.setColumnView(targetCellRef.getCol(), columnView);
             }
-            if (!isIgnoreRowProps()) {
+            if (updateRowHeightFlag && !isIgnoreRowProps()) {
                 try {
                     CellView rowView = destSheet.getRowView(targetCellRef.getRow());
                     rowView.setSize(sheetData.getRowData(srcCellRef.getRow()).getHeight());
@@ -97,6 +114,14 @@ public class JexcelTransformer extends AbstractTransformer {
                 logger.error("Failed to write a cell with {} and context keys {}", cellData, context.toMap().keySet(), e);
             }
         }
+    }
+
+    private WritableSheet createSheet(String srcSheetName, String targetSheetName) {
+        WritableSheet destSheet;
+        int numberOfSheets = writableWorkbook.getNumberOfSheets();
+        destSheet = writableWorkbook.createSheet(targetSheetName, numberOfSheets);
+        JexcelUtil.copySheetProperties(workbook.getSheet(srcSheetName), destSheet);
+        return destSheet;
     }
 
     private void copyMergedRegions(CellData sourceCellData, CellRef destCell) throws WriteException {
@@ -245,6 +270,27 @@ public class JexcelTransformer extends AbstractTransformer {
     public void setHidden(String sheetName, boolean hidden) {
         Sheet sheet = writableWorkbook.getSheet(sheetName);
         sheet.getSettings().setHidden(hidden);
+    }
+
+    @Override
+    public void updateRowHeight(String srcSheetName, int srcRowNum, String targetSheetName, int targetRowNum) {
+        SheetData sheetData = sheetMap.get(srcSheetName);
+        RowData rowData = sheetData.getRowData(srcRowNum);
+        WritableSheet destSheet = writableWorkbook.getSheet(targetSheetName);
+        if( destSheet == null ){
+            destSheet = createSheet(srcSheetName, targetSheetName);
+        }
+        try {
+            CellView rowView = destSheet.getRowView(targetRowNum);
+            if( rowData != null ) {
+                rowView.setSize((short) rowData.getHeight());
+            }else{
+                rowView.setAutosize(true);
+            }
+            destSheet.setRowView(targetRowNum, rowView);
+        } catch (RowsExceededException e) {
+            logger.error("Could not set Row View for row {}", targetRowNum, e);
+        }
     }
 
     private Integer findSheetIndex(String sheetName) {
