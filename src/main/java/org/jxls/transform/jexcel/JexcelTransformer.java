@@ -94,7 +94,7 @@ public class JexcelTransformer extends AbstractTransformer {
                 ((JexcelCellData) cellData).writeToCell(destSheet, targetCellRef.getCol(), targetCellRef.getRow(), context);
                 copyMergedRegions(cellData, targetCellRef);
             } catch (Exception e) {
-                logger.error("Failed to write a cell with " + cellData + " and " + context, e);
+                logger.error("Failed to write a cell with {} and context keys {}", cellData, context.toMap().keySet(), e);
             }
         }
     }
