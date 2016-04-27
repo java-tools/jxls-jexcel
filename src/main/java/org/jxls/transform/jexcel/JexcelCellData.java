@@ -1,18 +1,33 @@
 package org.jxls.transform.jexcel;
 
+import jxl.BooleanCell;
+import jxl.Cell;
+import jxl.CellFeatures;
+import jxl.DateCell;
+import jxl.ErrorCell;
+import jxl.FormulaCell;
+import jxl.LabelCell;
+import jxl.NumberCell;
+import jxl.biff.formula.FormulaException;
+import jxl.format.CellFormat;
+import jxl.write.Blank;
+import jxl.write.Boolean;
+import jxl.write.DateTime;
+import jxl.write.Formula;
+import jxl.write.Label;
+import jxl.write.Number;
+import jxl.write.WritableCell;
+import jxl.write.WritableCellFeatures;
+import jxl.write.WritableSheet;
+import jxl.write.WriteException;
 import org.jxls.common.CellData;
 import org.jxls.common.CellRef;
 import org.jxls.common.Context;
 import org.jxls.util.Util;
-import jxl.*;
-import jxl.Cell;
-import jxl.biff.formula.FormulaException;
-import jxl.format.CellFormat;
-import jxl.write.*;
-import jxl.write.Boolean;
-import jxl.write.Number;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Date;
 
 /**
  * @author Leonid Vysochyn
@@ -142,6 +157,9 @@ public class JexcelCellData extends CellData {
                 break;
             case ERROR:
                 writableCell = new Blank(col, row);
+                break;
+            case DATE:
+                writableCell = new DateTime(col, row, (Date)evaluationResult );
                 break;
             default:
                 writableCell = new Blank(col, row);
