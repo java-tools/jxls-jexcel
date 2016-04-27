@@ -19,13 +19,13 @@ import java.util.List;
  * @author Leonid Vysochyn
  */
 public class JexcelTransformer extends AbstractTransformer {
-    static Logger logger = LoggerFactory.getLogger(JexcelTransformer.class);
+    private static Logger logger = LoggerFactory.getLogger(JexcelTransformer.class);
     public static final String JEXCEL_CONTEXT_KEY = "util";
 
     public static final int MAX_COLUMN_TO_READ_COMMENT = 50;
 
-    Workbook workbook;
-    WritableWorkbook writableWorkbook;
+    private Workbook workbook;
+    private WritableWorkbook writableWorkbook;
 
     public JexcelTransformer() {
     }
@@ -49,9 +49,9 @@ public class JexcelTransformer extends AbstractTransformer {
         return context;
     }
 
-    private void readCellData(){
+    private void readCellData() {
         int numberOfSheets = workbook.getNumberOfSheets();
-        for(int i = 0; i < numberOfSheets; i++){
+        for (int i = 0; i < numberOfSheets; i++) {
             Sheet sheet = workbook.getSheet(i);
             SheetData sheetData = JexcelSheetData.createSheetData(sheet, this);
             sheetMap.put(sheetData.getSheetName(), sheetData);
@@ -64,24 +64,24 @@ public class JexcelTransformer extends AbstractTransformer {
 
     public void transform(CellRef srcCellRef, CellRef targetCellRef, Context context) {
         CellData cellData = this.getCellData(srcCellRef);
-        if(cellData != null){
-            if(targetCellRef == null || targetCellRef.getSheetName() == null){
+        if (cellData != null) {
+            if (targetCellRef == null || targetCellRef.getSheetName() == null) {
                 logger.info("Target cellRef is null or has empty sheet name, cellRef=" + targetCellRef);
                 return;
             }
             WritableSheet destSheet = writableWorkbook.getSheet(targetCellRef.getSheetName());
-            if(destSheet == null){
+            if (destSheet == null) {
                 int numberOfSheets = writableWorkbook.getNumberOfSheets();
                 destSheet = writableWorkbook.createSheet(targetCellRef.getSheetName(), numberOfSheets);
-                JexcelUtil.copySheetProperties(workbook.getSheet( srcCellRef.getSheetName() ), destSheet);
+                JexcelUtil.copySheetProperties(workbook.getSheet(srcCellRef.getSheetName()), destSheet);
             }
             SheetData sheetData = sheetMap.get(srcCellRef.getSheetName());
-            if(!isIgnoreColumnProps()){
+            if (!isIgnoreColumnProps()) {
                 CellView columnView = destSheet.getColumnView(targetCellRef.getCol());
                 columnView.setSize(sheetData.getColumnWidth(srcCellRef.getCol()));
                 destSheet.setColumnView(targetCellRef.getCol(), columnView);
             }
-            if(!isIgnoreRowProps()){
+            if (!isIgnoreRowProps()) {
                 try {
                     CellView rowView = destSheet.getRowView(targetCellRef.getRow());
                     rowView.setSize(sheetData.getRowData(srcCellRef.getRow()).getHeight());
@@ -90,26 +90,28 @@ public class JexcelTransformer extends AbstractTransformer {
                     logger.warn("Failed to set row height for " + targetCellRef.getCellName(), e);
                 }
             }
-            try{
-                ((JexcelCellData)cellData).writeToCell(destSheet, targetCellRef.getCol(), targetCellRef.getRow(), context);
+            try {
+                ((JexcelCellData) cellData).writeToCell(destSheet, targetCellRef.getCol(), targetCellRef.getRow(), context);
                 copyMergedRegions(cellData, targetCellRef);
-            }catch(Exception e){
+            } catch (Exception e) {
                 logger.error("Failed to write a cell with " + cellData + " and " + context, e);
             }
         }
     }
 
     private void copyMergedRegions(CellData sourceCellData, CellRef destCell) throws WriteException {
-        if(sourceCellData.getSheetName() == null ){ throw new IllegalArgumentException("Sheet name is null in copyMergedRegions");}
-        JexcelSheetData sheetData = (JexcelSheetData)sheetMap.get( sourceCellData.getSheetName() );
+        if (sourceCellData.getSheetName() == null) {
+            throw new IllegalArgumentException("Sheet name is null in copyMergedRegions");
+        }
+        JexcelSheetData sheetData = (JexcelSheetData) sheetMap.get(sourceCellData.getSheetName());
         Range cellMergedRegion = null;
         for (Range mergedRegion : sheetData.getMergedCells()) {
-            if(mergedRegion.getTopLeft().getRow() == sourceCellData.getRow() && mergedRegion.getTopLeft().getColumn() == sourceCellData.getCol()){
+            if (mergedRegion.getTopLeft().getRow() == sourceCellData.getRow() && mergedRegion.getTopLeft().getColumn() == sourceCellData.getCol()) {
                 cellMergedRegion = mergedRegion;
                 break;
             }
         }
-        if( cellMergedRegion != null){
+        if (cellMergedRegion != null) {
             findAndRemoveExistingCellRegion(destCell);
             WritableSheet destSheet = writableWorkbook.getSheet(destCell.getSheetName());
             destSheet.mergeCells(destCell.getCol(), destCell.getRow(),
@@ -121,10 +123,10 @@ public class JexcelTransformer extends AbstractTransformer {
     private void findAndRemoveExistingCellRegion(CellRef cellRef) {
         WritableSheet destSheet = writableWorkbook.getSheet(cellRef.getSheetName());
         Range[] mergedRegions = destSheet.getMergedCells();
-        for(Range mergedRegion : mergedRegions){
-            if(mergedRegion.getTopLeft().getRow() <= cellRef.getRow() && mergedRegion.getBottomRight().getRow() >= cellRef.getRow() &&
-                    mergedRegion.getTopLeft().getColumn() <= cellRef.getCol() && mergedRegion.getBottomRight().getColumn() >= cellRef.getCol() ){
-                destSheet.unmergeCells( mergedRegion );
+        for (Range mergedRegion : mergedRegions) {
+            if (mergedRegion.getTopLeft().getRow() <= cellRef.getRow() && mergedRegion.getBottomRight().getRow() >= cellRef.getRow() &&
+                    mergedRegion.getTopLeft().getColumn() <= cellRef.getCol() && mergedRegion.getBottomRight().getColumn() >= cellRef.getCol()) {
+                destSheet.unmergeCells(mergedRegion);
             }
         }
     }
@@ -133,34 +135,34 @@ public class JexcelTransformer extends AbstractTransformer {
     public void resetArea(AreaRef areaRef) {
         WritableSheet destSheet = writableWorkbook.getSheet(areaRef.getSheetName());
         Range[] mergedRegions = destSheet.getMergedCells();
-        for(Range mergedRegion : mergedRegions){
+        for (Range mergedRegion : mergedRegions) {
             destSheet.unmergeCells(mergedRegion);
         }
     }
 
     public void setFormula(CellRef cellRef, String formulaString) {
-        if(cellRef == null || cellRef.getSheetName() == null ) return;
+        if (cellRef == null || cellRef.getSheetName() == null) return;
         WritableSheet sheet = writableWorkbook.getSheet(cellRef.getSheetName());
-        if( sheet == null){
+        if (sheet == null) {
             int numberOfSheets = writableWorkbook.getNumberOfSheets();
             sheet = writableWorkbook.createSheet(cellRef.getSheetName(), numberOfSheets);
         }
         Cell cell = sheet.getCell(cellRef.getCol(), cellRef.getRow());
         WritableCell writableCell = new Formula(cellRef.getCol(), cellRef.getRow(), formulaString);
-        if(cell != null && cell.getCellFormat() != null){
+        if (cell != null && cell.getCellFormat() != null) {
             writableCell.setCellFormat(cell.getCellFormat());
         }
-        try{
+        try {
             sheet.addCell(writableCell);
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.error("Failed to set formula = " + formulaString + " into cell = " + cellRef.getCellName(), e);
         }
     }
 
     public void clearCell(CellRef cellRef) {
-        if(cellRef == null || cellRef.getSheetName() == null ) return;
+        if (cellRef == null || cellRef.getSheetName() == null) return;
         WritableSheet sheet = writableWorkbook.getSheet(cellRef.getSheetName());
-        if( sheet == null ) return;
+        if (sheet == null) return;
         Blank blankCell = new Blank(cellRef.getCol(), cellRef.getRow());
         try {
             sheet.addCell(blankCell);
@@ -173,15 +175,15 @@ public class JexcelTransformer extends AbstractTransformer {
         List<CellData> commentedCells = new ArrayList<CellData>();
         for (SheetData sheetData : sheetMap.values()) {
             for (RowData rowData : sheetData) {
-                if( rowData == null ) continue;
+                if (rowData == null) continue;
                 for (CellData cellData : rowData) {
-                    if(cellData != null && cellData.getCellComment() != null ){
+                    if (cellData != null && cellData.getCellComment() != null) {
                         commentedCells.add(cellData);
                     }
                 }
-                if( rowData.getNumberOfCells() == 0 ){
-                    List<CellData> commentedCellData = readCommentsFromSheet(((JexcelSheetData)sheetData).getSheet(),  ((JexcelRowData)rowData).getRow());
-                    commentedCells.addAll( commentedCellData );
+                if (rowData.getNumberOfCells() == 0) {
+                    List<CellData> commentedCellData = readCommentsFromSheet(((JexcelSheetData) sheetData).getSheet(), ((JexcelRowData) rowData).getRow());
+                    commentedCells.addAll(commentedCellData);
                 }
             }
         }
@@ -189,27 +191,27 @@ public class JexcelTransformer extends AbstractTransformer {
     }
 
     public void addImage(AreaRef areaRef, byte[] imageBytes, ImageType imageType) {
-        if( imageType == null ){
+        if (imageType == null) {
             throw new IllegalArgumentException("Image type is undefined");
         }
-        if( imageType != ImageType.PNG){
+        if (imageType != ImageType.PNG) {
             throw new IllegalArgumentException("Only PNG images are currently supported");
         }
         WritableSheet sheet = writableWorkbook.getSheet(areaRef.getSheetName());
-        sheet.addImage(new WritableImage(areaRef.getFirstCellRef().getCol(),areaRef.getFirstCellRef().getRow(),
-        areaRef.getLastCellRef().getCol() - areaRef.getFirstCellRef().getCol(),
-        areaRef.getLastCellRef().getRow() - areaRef.getFirstCellRef().getRow(),imageBytes));
+        sheet.addImage(new WritableImage(areaRef.getFirstCellRef().getCol(), areaRef.getFirstCellRef().getRow(),
+                areaRef.getLastCellRef().getCol() - areaRef.getFirstCellRef().getCol(),
+                areaRef.getLastCellRef().getRow() - areaRef.getFirstCellRef().getRow(), imageBytes));
     }
 
     public void write() throws IOException {
-        if(writableWorkbook != null){
+        if (writableWorkbook != null) {
             writableWorkbook.write();
             try {
                 writableWorkbook.close();
             } catch (WriteException e) {
                 throw new IllegalStateException("Cannot close a writable workbook", e);
             }
-        }else{
+        } else {
             throw new IllegalStateException("An attempt to write an output stream with an uninitialized WritableWorkbook");
         }
     }
@@ -228,10 +230,15 @@ public class JexcelTransformer extends AbstractTransformer {
     }
 
     @Override
-    public void deleteSheet(String sheetName) {
-        super.deleteSheet(sheetName);
-        Integer sheetIndex = findSheetIndex(sheetName);
-        writableWorkbook.removeSheet(sheetIndex);
+    public boolean deleteSheet(String sheetName) {
+        if (super.deleteSheet(sheetName)) {
+            Integer sheetIndex = findSheetIndex(sheetName);
+            writableWorkbook.removeSheet(sheetIndex);
+            return true;
+        } else {
+            logger.warn("Failed to find '{}' worksheet in a sheet map. Skipping the deletion.", sheetName);
+            return false;
+        }
     }
 
     @Override
@@ -243,8 +250,8 @@ public class JexcelTransformer extends AbstractTransformer {
     private Integer findSheetIndex(String sheetName) {
         Integer index = null;
         final Sheet[] sheets = workbook.getSheets();
-        for(int i=0;i<sheets.length && index == null; i++) {
-            if(sheets[i].getName().equals(sheetName)) {
+        for (int i = 0; i < sheets.length && index == null; i++) {
+            if (sheets[i].getName().equals(sheetName)) {
                 index = i;
             }
         }
