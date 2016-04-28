@@ -3,7 +3,7 @@
     <groupId>org.jxls</groupId>
     <artifactId>jxls-jexcel</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.6-SNAPSHOT</version>
+    <version>1.0.7-SNAPSHOT</version>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>Jexcel API Transformer implementation for Jxls library</description>
     <url>http://jxls.sf.net</url>
