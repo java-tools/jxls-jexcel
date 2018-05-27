@@ -3,7 +3,7 @@
     <groupId>org.jxls</groupId>
     <artifactId>jxls-jexcel</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.7-SNAPSHOT</version>
+    <version>1.0.7</version>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>Jexcel API Transformer implementation for Jxls library</description>
     <url>http://jxls.sf.net</url>
@@ -33,7 +33,7 @@
         <connection>scm:git:http://bitbucket.org/leonate/jxls-jexcel.git</connection>
         <developerConnection>scm:git:https://bitbucket.org/leonate/jxls-jexcel.git</developerConnection>
         <url>https://bitbucket.org/leonate/jxls-jexcel</url>
-        <tag>HEAD</tag>
+        <tag>jxls-jexcel-1.0.7</tag>
     </scm>
 
     <build>
