@@ -22,6 +22,7 @@ import org.jxls.common.Context;
 import org.jxls.common.ImageType;
 import org.jxls.common.RowData;
 import org.jxls.common.SheetData;
+import org.jxls.common.Size;
 import org.jxls.transform.AbstractTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -304,4 +305,8 @@ public class JexcelTransformer extends AbstractTransformer {
         return index;
     }
 
+    @Override
+    public void adjustTableSize(CellRef ref, Size size) {
+        throw new UnsupportedOperationException("Yet no table support for jExcel.");
+    }
 }
